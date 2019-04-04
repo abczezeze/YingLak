@@ -85,7 +85,7 @@ function init() {
   scene.add(dlight)
   // model
   var loaderModel = new THREE.GLTFLoader(loadingManager)
-  loaderModel.load( './models/goalkeeper_gltf/scene.gltf', (object) => {
+  loaderModel.load( './Models/goalkeeper_gltf/scene.gltf', (object) => {
     var animations = object.animations;
     goalkeeperModel = object.scene
     // console.log(goalkeeperModel);
