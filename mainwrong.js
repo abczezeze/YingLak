@@ -85,7 +85,7 @@ function init() {
   scene.add(dlight)
   // model
   var loaderModel = new THREE.GLTFLoader(loadingManager)
-  loaderModel.load( './models/goalkeeper_gltf/scene.gltf', (object) => {
+  loaderModel.load( './Models/goalkeeper_gltf/scene.gltf', (object) => {
     var animations = object.animations;
     goalkeeperModel = object.scene
     // console.log(goalkeeperModel);
@@ -95,10 +95,12 @@ function init() {
       if(node instanceof THREE.Mesh){
         node.castShadow = true
         node.resiveShadow = true
+        console.log(node);        
         }
       })
       goalkeeperMixer = new THREE.AnimationMixer( goalkeeperModel );
-      goalkeeperAction = goalkeeperMixer.clipAction(animations[0])/*.setDuration(10);*/
+      goalkeeperAction = goalkeeperMixer.clipAction(animations[3])
+      // action.setLoop( THREE.LoopOnce );
       goalkeeperAction.play();
       scene.add( goalkeeperModel );
       //goalkeeperContainer
@@ -108,7 +110,15 @@ function init() {
         // Uncomment the next line to see the wireframe of the container shape
         new THREE.MeshBasicMaterial({ wireframe: true }) 
       );
-      goalkeeperContainer.position.y = 10;
+      var positionKF = new THREE.VectorKeyframeTrack( '.position', [ 0, 1, 2 ], [ 0, 0, 0, 30, 0, 0, 0, 0, 0 ] );
+      var xAxis = new THREE.Vector3( 1, 0, 0 );
+			var qInitial = new THREE.Quaternion().setFromAxisAngle( xAxis, 0 );
+			var qFinal = new THREE.Quaternion().setFromAxisAngle( xAxis, Math.PI );
+  		var quaternionKF = new THREE.QuaternionKeyframeTrack( '.quaternion', [ 0, 1, 2 ], [ qInitial.x, qInitial.y, qInitial.z, qInitial.w, qFinal.x, qFinal.y, qFinal.z, qFinal.w, qInitial.x, qInitial.y, qInitial.z, qInitial.w ] );
+      var goalkeeperclip = new THREE.AnimationClip( 'Action', 3, [ quaternionKF, positionKF] );
+      goalkeeperConMixer = new THREE.AnimationMixer( goalkeeperContainer );
+      var goalkeeperConAction = goalkeeperConMixer.clipAction( goalkeeperclip );
+			goalkeeperConAction.play();
 
       goalkeeperContainer.add(goalkeeperModel)
       scene.add( goalkeeperContainer ); 	
@@ -132,7 +142,7 @@ function init() {
       0 //mass
     );
     floor.receiveShadow = true;
-    floor.position.set(0,0,0);
+    floor.position.set(0,-4,0);
     scene.add( floor ); 
     
 
@@ -214,6 +224,7 @@ function render(){
   var delta = clock.getDelta();
   if ( goalkeeperMixer !== undefined ) {
     goalkeeperMixer.update(delta);
+    goalkeeperConMixer.update(delta);
   }
   scene.simulate(); // run physics
   effcutout.render(scene, camera)
