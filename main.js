@@ -91,6 +91,7 @@ function init() {
     // console.log(goalkeeperModel);
     goalkeeperModel.scale.set(5,5,5)
     goalkeeperModel.position.y = -4
+    
     goalkeeperModel.traverse((node) => {
       if(node instanceof THREE.Mesh){
         node.castShadow = true
@@ -99,7 +100,8 @@ function init() {
         }
       })
       goalkeeperMixer = new THREE.AnimationMixer( goalkeeperModel );
-      goalkeeperAction = goalkeeperMixer.clipAction(animations[2])/*.setDuration(10);*/
+      goalkeeperAction = goalkeeperMixer.clipAction(animations[0])/*.setDuration(10);*/
+      // action.setLoop( THREE.LoopOnce );
       goalkeeperAction.play();
       scene.add( goalkeeperModel );
       //goalkeeperContainer
@@ -107,20 +109,11 @@ function init() {
         new THREE.CubeGeometry( 5, 8, 1 ),
         // new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.0 })
         // Uncomment the next line to see the wireframe of the container shape
-        new THREE.MeshBasicMaterial({ wireframe: true }) 
+        new THREE.MeshBasicMaterial({ wireframe: true }),
+        200
       );
       goalkeeperContainer.position.y = 10;
-
-      var positionKF = new THREE.VectorKeyframeTrack( '.position', [ 0, 1, 2 ], [ 0, 0, 0, 30, 0, 0, 0, 0, 0 ] );
-      var xAxis = new THREE.Vector3( 0, 0, 0 );
-			var qInitial = new THREE.Quaternion().setFromAxisAngle( xAxis, 0 );
-			var qFinal = new THREE.Quaternion().setFromAxisAngle( xAxis, Math.PI );
-  		var quaternionKF = new THREE.QuaternionKeyframeTrack( '.quaternion', [ 0, 1, 2 ], [ qInitial.x, qInitial.y, qInitial.z, qInitial.w, qFinal.x, qFinal.y, qFinal.z, qFinal.w, qInitial.x, qInitial.y, qInitial.z, qInitial.w ] );
-      var goalkeeperclip = new THREE.AnimationClip( 'Action', 3, [ quaternionKF, positionKF] );
-      goalkeeperConMixer = new THREE.AnimationMixer( goalkeeperContainer );
-      var goalkeeperConAction = goalkeeperConMixer.clipAction( goalkeeperclip );
-			goalkeeperConAction.play();
-
+      
       goalkeeperContainer.add(goalkeeperModel)
       scene.add( goalkeeperContainer ); 	
     });
@@ -128,15 +121,15 @@ function init() {
     // var loaderTexture = new THREE.ImageLoader( loadingManager );
     var grassTexture = new THREE.TextureLoader(loadingManager).load('Textures/GrassGreenTexture_brusheezy.jpg')
     var grassTexture_nm = new THREE.TextureLoader(loadingManager).load('Textures/GrassGreenTexture_brusheezy_normal.jpg')
-      
     var friction = 1; // high friction
     var restitution = 0.3; // low restitution
-
     var floorMaterial = Physijs.createMaterial(
       new THREE.MeshPhongMaterial({ color:0xffffff, map:grassTexture, normalMap:grassTexture_nm}), 
         friction,
         restitution
       );
+      floorMaterial.map.wrapS = floorMaterial.map.wrapT = floorMaterial.RepeatWrapping;
+      floorMaterial.map.repeat.set( 30,30 );
     floor = new Physijs.BoxMesh(
       new THREE.BoxGeometry( 100, 0.1, 100 ),
       floorMaterial,
@@ -185,7 +178,7 @@ function onDocumentMouseDown(event){
   // var intersects = raycaster.intersectObjects(scene.children)
   // Intersects = raycaster.intersectObjects(networkObject)
   // Creates a ball and throws it
-  var ballMass = 135;
+  var ballMass = 13
   var ballRadius = 0.8; 
   var ball = new Physijs.SphereMesh( 
     new THREE.SphereGeometry( ballRadius, 10, 10 ), 
@@ -204,6 +197,14 @@ function onDocumentMouseDown(event){
   pos.copy( raycaster.ray.direction );
   pos.multiplyScalar( 80 );
   ball.setLinearVelocity( new THREE.Vector3( pos.x, pos.y, pos.z ) ); 
+
+  goalkeeperContainer.position.x = THREE.Math.randInt(-10,10)
+  goalkeeperContainer.position.y = 5;
+  goalkeeperContainer.__dirtyPosition = true;
+  goalkeeperContainer.rotation.set(Math.PI*2, 0, 0);
+  goalkeeperContainer.__dirtyRotation = true;
+  // goalkeeperContainer.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+  // goalkeeperContainer.setAngularVelocity(new THREE.Vector3(0, 0, 0));
 }
 function animate(){
     // This block runs while resources are loading.
@@ -225,9 +226,15 @@ function render(){
   var delta = clock.getDelta();
   if ( goalkeeperMixer !== undefined ) {
     goalkeeperMixer.update(delta);
-    goalkeeperConMixer.update(delta);
   }
+  
+  // goalkeeperContainer.position.x = 10;
+  // goalkeeperContainer.__dirtyPosition = true;
+  // goalkeeperContainer.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+  // goalkeeperContainer.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+
   scene.simulate(); // run physics
+  
   effcutout.render(scene, camera)
   
 }
