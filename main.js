@@ -107,9 +107,9 @@ function init() {
       //goalkeeperContainer
       goalkeeperContainer = new Physijs.BoxMesh(
         new THREE.CubeGeometry( 5, 8, 1 ),
-        // new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.0 })
+        new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.0 }),
         // Uncomment the next line to see the wireframe of the container shape
-        new THREE.MeshBasicMaterial({ wireframe: true }),
+        // new THREE.MeshBasicMaterial({ wireframe: true }),
         200
       );
       goalkeeperContainer.position.y = 10;
@@ -198,9 +198,10 @@ function onDocumentMouseDown(event){
   pos.multiplyScalar( 80 );
   ball.setLinearVelocity( new THREE.Vector3( pos.x, pos.y, pos.z ) ); 
 
-  goalkeeperContainer.position.x = THREE.Math.randInt(-10,10)
-  goalkeeperContainer.position.y = 5;
-  goalkeeperContainer.position.z = 0;
+  // goalkeeperContainer.position.x = THREE.Math.randInt(-10,10)
+  // goalkeeperContainer.position.y = 5;
+  // goalkeeperContainer.position.z = 0;
+  goalkeeperContainer.position.set(THREE.Math.randInt(-10,10),5,0);
   goalkeeperContainer.__dirtyPosition = true;
   goalkeeperContainer.rotation.set(Math.PI*2, 0, 0);
   goalkeeperContainer.__dirtyRotation = true;
