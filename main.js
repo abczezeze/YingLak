@@ -200,6 +200,7 @@ function onDocumentMouseDown(event){
 
   goalkeeperContainer.position.x = THREE.Math.randInt(-10,10)
   goalkeeperContainer.position.y = 5;
+  goalkeeperContainer.position.z = 0;
   goalkeeperContainer.__dirtyPosition = true;
   goalkeeperContainer.rotation.set(Math.PI*2, 0, 0);
   goalkeeperContainer.__dirtyRotation = true;
