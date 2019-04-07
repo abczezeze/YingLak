@@ -238,9 +238,9 @@ function animate(){
   if( RESOURCES_LOADED == false ){
     requestAnimationFrame(animate);
     // loadingScreen.box.position.x -= 0.05;
-    loadingScreen.box.rotation.x -= 0.1;
-    loadingScreen.box.rotation.y -= 0.1;
-    loadingScreen.box.rotation.z -= 0.1;
+    loadingScreen.box.rotation.x -= 0.01;
+    loadingScreen.box.rotation.y -= 0.01;
+    loadingScreen.box.rotation.z -= 0.01;
     effcutout.render(loadingScreen.scene, loadingScreen.camera);
     return; // Stop the function here.
   }
