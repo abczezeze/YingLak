@@ -101,6 +101,7 @@ function init() {
       })
       goalkeeperMixer = new THREE.AnimationMixer( goalkeeperModel );
       goalkeeperAction = goalkeeperMixer.clipAction(animations[0])/*.setDuration(10);*/
+      goalkeeperActionKick = goalkeeperMixer.clipAction(animations[1])/*.setDuration(10);*/
       // action.setLoop( THREE.LoopOnce );
       goalkeeperAction.play();
       scene.add( goalkeeperModel );
@@ -169,6 +170,16 @@ function init() {
   handleCollision = function( collided_with, linearVelocity, angularVelocity ) {
     if(collided_with.name === 'goalkeeperContainer'){
       console.log("Yo",count++);
+      // console.log("Mod",count%10);
+      
+      if(count%2===0)
+        goalkeeperActionKick.stop()
+      else
+        goalkeeperActionKick.play()
+      // setTimeout(()=>{
+      //   goalkeeperActionKick.stop()
+      //   ,10000
+      // })
     }
   }
 
