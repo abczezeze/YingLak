@@ -113,10 +113,9 @@ function init() {
         200
       );
       goalkeeperContainer.position.y = 3;
-      
+      goalkeeperContainer.name = 'goalkeeperContainer'
       goalkeeperContainer.add(goalkeeperModel)
       scene.add( goalkeeperContainer );
-      
     });
     //groundphysic
     // var loaderTexture = new THREE.ImageLoader( loadingManager );
@@ -139,6 +138,15 @@ function init() {
     floor.receiveShadow = true;
     floor.position.set(0,0,0);
     scene.add( floor ); 
+
+  htmlPlayer = document.createElement("div")
+  htmlPlayer.style.position = 'absolute'
+  htmlPlayer.style.top = '60px'
+  htmlPlayer.style.textAlign = 'left'
+  htmlPlayer.style.color = '#1aff3c'
+  htmlPlayer.innerHTML = 'Player: 0'
+  htmlPlayer.style.textShadow = '0 0 4px #000'
+  document.body.appendChild(htmlPlayer);
     
 
   renderer = new THREE.WebGLRenderer({antialias:true})
@@ -157,14 +165,12 @@ function init() {
   window.addEventListener('resize',onWindowResize,false)
 }
 
-handleCollision = function( collided_with, linearVelocity, angularVelocity ) {
-  
-  console.log("Yo",count++);
-  // console.log(collided_with);
-  // console.log(linearVelocity);
-  // console.log(angularVelocity);
-  
-}
+
+  handleCollision = function( collided_with, linearVelocity, angularVelocity ) {
+    if(collided_with.name === 'goalkeeperContainer'){
+      console.log("Yo",count++);
+    }
+  }
 
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight
@@ -194,22 +200,20 @@ function onDocumentMouseDown(event){
     ballMass
   );
   
-  ball.castShadow = true;
-  ball.receiveShadow = true;
-  
-  ball.position.copy(raycaster.ray.direction);
-  ball.position.add(raycaster.ray.origin); 
-          
-  scene.add(ball);
-  
-  pos.copy( raycaster.ray.direction );
-  pos.multiplyScalar( 80 );
-  ball.setLinearVelocity( new THREE.Vector3( pos.x, pos.y, pos.z ) ); 
+    ball.castShadow = true;
+    ball.receiveShadow = true;
+    
+    ball.position.copy(raycaster.ray.direction);
+    ball.position.add(raycaster.ray.origin); 
+            
+    scene.add(ball);
+    
+    pos.copy( raycaster.ray.direction );
+    pos.multiplyScalar( 180 );
+    ball.setLinearVelocity( new THREE.Vector3( pos.x, pos.y, pos.z ) ); 
 
-  goalkeeperContainer.addEventListener( 'collision', handleCollision(ball) ); 	
-  // goalkeeperContainer.position.x = THREE.Math.randInt(-10,10)
-  // goalkeeperContainer.position.y = 5;
-  // goalkeeperContainer.position.z = 0;
+  ball.addEventListener( 'collision', handleCollision );
+  // goalkeeperContainer.addEventListener( 'ready', spawnBox );
   goalkeeperContainer.position.set(THREE.Math.randInt(-10,10),3,0);
   goalkeeperContainer.__dirtyPosition = true;
   goalkeeperContainer.rotation.set(Math.PI*2, 0, 0);
@@ -217,6 +221,7 @@ function onDocumentMouseDown(event){
   // goalkeeperContainer.setLinearVelocity(new THREE.Vector3(0, 0, 0));
   // goalkeeperContainer.setAngularVelocity(new THREE.Vector3(0, 0, 0));
 }
+  
 function animate(){
     // This block runs while resources are loading.
   if( RESOURCES_LOADED == false ){
@@ -242,8 +247,8 @@ function render(){
   // goalkeeperContainer.position.x = 10;
   // goalkeeperContainer.__dirtyPosition = true;
   goalkeeperContainer.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-  // goalkeeperContainer.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-
+  // goalkeeperContainer.setAngularVelocity(new THREE.Vector3(2, 3, 5));
+  htmlPlayer.innerHTML = 'Player: '+count
 
   scene.simulate(); // run physics
   
