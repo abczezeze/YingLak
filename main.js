@@ -133,21 +133,22 @@ function init() {
     // var arrowHelper = new THREE.ArrowHelper( dir, origin, 4, hex,.7,.5 );
     // scene.add( arrowHelper );
     //door   
-    doorLeft = new Physijs.CylinderMesh(new THREE.CylinderGeometry(1,1,20,32),  new THREE.MeshPhongMaterial({ color:0x555555}),0)
+    doorLeft = new Physijs.CylinderMesh(new THREE.CylinderGeometry(1,1,15,32),  new THREE.MeshPhongMaterial({ color:0x555555}),0)
     doorLeft.receiveShadow = true
     doorLeft.castShadow = true
-    doorLeft.position.set(-20,6,0)
+    doorLeft.position.set(-15,6,0)
     scene.add( doorLeft )
-    doorRight = new Physijs.CylinderMesh(new THREE.CylinderGeometry(1,1,20,32),  new THREE.MeshPhongMaterial({ color:0x555555}),0)
+    doorRight = new Physijs.CylinderMesh(new THREE.CylinderGeometry(1,1,15,32),  new THREE.MeshPhongMaterial({ color:0x555555}),0)
     doorRight.receiveShadow = true
     doorRight.castShadow = true
-    doorRight.position.set(20,6,0)
+    doorRight.position.set(15,6,0)
     scene.add( doorRight )
-    doorTop = new Physijs.CylinderMesh(new THREE.CylinderGeometry(1,1,20,32),  new THREE.MeshPhongMaterial({ color:0x555555}),0)
+    // doorTop = new THREE.Mesh(new THREE.CylinderGeometry(1,1,20,32),  new THREE.MeshPhongMaterial({ color:0x555555}))
+    doorTop = new Physijs.CylinderMesh(new THREE.CylinderGeometry(1,1,30,32),  new THREE.MeshPhongMaterial({ color:0x555555}),0)
     doorTop.receiveShadow = true
     doorTop.castShadow = true
-    doorTop.rotation.y=Math.PI/2
-    doorTop.position.set(0,20,0)
+    doorTop.rotation.z=Math.PI/2
+    doorTop.position.set(0,14,0)
     scene.add( doorTop )
     
     //groundphysic
