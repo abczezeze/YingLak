@@ -8,10 +8,9 @@ var goalkeeperModel, goalkeeperContainer, goalkeeperMixer, goalkeeperAction, goa
 var mouseCoords = new THREE.Vector2()
 var raycaster = new THREE.Raycaster()
 //ball
-var ballMaterial = new THREE.MeshPhongMaterial( { color: 0x202020 } );
+var ballz
 var pos = new THREE.Vector3();
 var quat = new THREE.Quaternion();
-
 //loadingScreen
 var loadingScreen = {
 	scene: new THREE.Scene(),
@@ -116,8 +115,41 @@ function init() {
       goalkeeperContainer.position.y = 3;
       goalkeeperContainer.name = 'goalkeeperContainer'
       goalkeeperContainer.add(goalkeeperModel)
-      scene.add( goalkeeperContainer );
+      scene.add( goalkeeperContainer )
     });
+    //ballz
+    var ballzTexture = new THREE.TextureLoader(loadingManager).load('Textures/ballTexture.png')
+    var ballzMaterial = Physijs.createMaterial(new THREE.MeshPhongMaterial({ color:0xffffff, map:ballzTexture}))
+    ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
+    ballz.receiveShadow = true
+    ballz.castShadow = true
+    ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40))
+    scene.add( ballz )
+    //ArrowBallz
+    // var dir = new THREE.Vector3( 1, 2, 0 );
+    // dir.normalize();
+    // var origin = new THREE.Vector3( 0, ballz.position.y, ballz.position.z );
+    // var hex = 0x0000ff;
+    // var arrowHelper = new THREE.ArrowHelper( dir, origin, 4, hex,.7,.5 );
+    // scene.add( arrowHelper );
+    //door   
+    doorLeft = new Physijs.CylinderMesh(new THREE.CylinderGeometry(1,1,20,32),  new THREE.MeshPhongMaterial({ color:0x555555}),0)
+    doorLeft.receiveShadow = true
+    doorLeft.castShadow = true
+    doorLeft.position.set(-20,6,0)
+    scene.add( doorLeft )
+    doorRight = new Physijs.CylinderMesh(new THREE.CylinderGeometry(1,1,20,32),  new THREE.MeshPhongMaterial({ color:0x555555}),0)
+    doorRight.receiveShadow = true
+    doorRight.castShadow = true
+    doorRight.position.set(20,6,0)
+    scene.add( doorRight )
+    doorTop = new Physijs.CylinderMesh(new THREE.CylinderGeometry(1,1,20,32),  new THREE.MeshPhongMaterial({ color:0x555555}),0)
+    doorTop.receiveShadow = true
+    doorTop.castShadow = true
+    doorTop.rotation.y=Math.PI/2
+    doorTop.position.set(0,20,0)
+    scene.add( doorTop )
+    
     //groundphysic
     // var loaderTexture = new THREE.ImageLoader( loadingManager );
     var grassTexture = new THREE.TextureLoader(loadingManager).load('Textures/GrassGreenTexture_brusheezy.jpg')
@@ -145,7 +177,7 @@ function init() {
   htmlPlayer.style.top = '60px'
   htmlPlayer.style.textAlign = 'left'
   htmlPlayer.style.color = '#1aff3c'
-  htmlPlayer.innerHTML = 'Player: 0'
+  htmlPlayer.innerHTML = 'Goal: 0'
   htmlPlayer.style.textShadow = '0 0 4px #000'
   document.body.appendChild(htmlPlayer);
     
@@ -160,8 +192,13 @@ function init() {
   controls = new THREE.OrbitControls(camera)
   effcutout = new THREE.OutlineEffect(renderer)
   
-  document.addEventListener('mousedown',onDocumentMouseDown,false)
-  document.addEventListener('touchstart',onDocumentTouchStart,false)
+  window.addEventListener( 'mousedown', onMouseDown, false ); 
+  window.addEventListener( 'mousemove', onMouseMove, false );	
+  // window.addEventListener( 'click', onMouseDown, false );	
+  window.addEventListener( 'mouseup', onMouseUp, false);
+  
+  window.addEventListener('touchstart',onTouchStart,false)
+  window.addEventListener('touchend',onMouseUp,false)
       
   window.addEventListener('resize',onWindowResize,false)
 }
@@ -189,48 +226,52 @@ function onWindowResize() {
   renderer.setSize( window.innerWidth, window.innerHeight )
 }
 
-function onDocumentTouchStart( event ) {
+function onTouchStart( event ) {
   event.preventDefault()
   event.clientX = event.touches[0].clientX
   event.clientY = event.touches[0].clientY
-  onDocumentMouseDown( event )
+  onMouseDown( event )
 }
-function onDocumentMouseDown(event){
+function onMouseDown(event){ 
   event.preventDefault()
+  checkMouseTouch = true
+  numballz = 1
   mouseCoords.x = (event.clientX/window.innerWidth)*2-1
   mouseCoords.y = -(event.clientY/window.innerHeight)*2+1
   raycaster.setFromCamera(mouseCoords,camera)
   // var intersects = raycaster.intersectObjects(scene.children)
   // Intersects = raycaster.intersectObjects(networkObject)
-  // Creates a ball and throws it
-  var ballMass = 13
-  var ballRadius = 0.8; 
-  var ball = new Physijs.SphereMesh( 
-    new THREE.SphereGeometry( ballRadius, 10, 10 ), 
-    ballMaterial,
-    ballMass
-  );
-  
-    ball.castShadow = true;
-    ball.receiveShadow = true;
-    
-    ball.position.copy(raycaster.ray.direction);
-    ball.position.add(raycaster.ray.origin); 
-            
-    scene.add(ball);
-    
-    pos.copy( raycaster.ray.direction );
-    pos.multiplyScalar( 180 );
-    ball.setLinearVelocity( new THREE.Vector3( pos.x, pos.y, pos.z ) ); 
 
-  ball.addEventListener( 'collision', handleCollision );
+  ballz.position.copy(raycaster.ray.direction);
+  ballz.position.add(raycaster.ray.origin);
+  pos.copy( raycaster.ray.direction );
+  pos.multiplyScalar( 180 );
+  ballz.setLinearVelocity( new THREE.Vector3( pos.x, pos.y, pos.z ) );
+            // setTimeout(()=>{
+            //   scene.add(ballz)
+            //  ,5000
+            // })
+  ballz.addEventListener( 'collision', handleCollision );
   // goalkeeperContainer.addEventListener( 'ready', spawnBox );
+  
   goalkeeperContainer.position.set(THREE.Math.randInt(-10,10),3,0);
+  goalkeeperContainer.setCcdMotionThreshold(.3);
   goalkeeperContainer.__dirtyPosition = true;
   goalkeeperContainer.rotation.set(Math.PI*2, 0, 0);
   goalkeeperContainer.__dirtyRotation = true;
   // goalkeeperContainer.setLinearVelocity(new THREE.Vector3(0, 0, 0));
   // goalkeeperContainer.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+}
+function onMouseUp( event ) {
+  var ballzTexture = new THREE.TextureLoader(loadingManager).load('Textures/ballTexture.png')
+  var ballzMaterial = Physijs.createMaterial(new THREE.MeshPhongMaterial({ color:0xffffff, map:ballzTexture}))
+  ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
+  ballz.receiveShadow = true;
+  ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40));
+  scene.add(ballz)
+}
+function onMouseMove( event ) {
+  console.log(event.buttons);  
 }
   
 function animate(){
@@ -251,15 +292,13 @@ function animate(){
 
 function render(){
   var delta = clock.getDelta();
-  if ( goalkeeperMixer !== undefined ) {
-    goalkeeperMixer.update(delta);
-  }
-  
+  goalkeeperMixer.update(delta);
+
   // goalkeeperContainer.position.x = 10;
   // goalkeeperContainer.__dirtyPosition = true;
   goalkeeperContainer.setLinearVelocity(new THREE.Vector3(0, 0, 0));
   // goalkeeperContainer.setAngularVelocity(new THREE.Vector3(2, 3, 5));
-  htmlPlayer.innerHTML = 'Player: '+count
+  htmlPlayer.innerHTML = 'Goal: '+count
 
   scene.simulate(); // run physics
   
