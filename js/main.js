@@ -24,7 +24,7 @@ var loadingManager = null;
 var RESOURCES_LOADED = false;
 var itemload, itemtotal;
 var loadpage=0;
-var count = 0;
+var goalkeeperContainerCount = 0, doorContianerCount = 0
 // - Main code -
 init()
 animate()
@@ -54,13 +54,6 @@ function init() {
       //console.log(item, loaded, total);
       perload = loaded/total*100
       foo = document.getElementById('foo');
-      // foo.style.position = 'absolute';
-      // foo.style.top = '100px';
-      // foo.style.textAlign = 'center';
-      // foo.style.width = '100%'
-      // foo.style.color = '#0099ff';
-      // foo.style.fontSize = '20px';
-      // foo.innerHTML = "Loading: "+perload.toFixed(2)+"%<br>Item: "+item+"<br>Total: "+total;
       foo.innerHTML = "Loading: "+perload.toFixed(2)+"%<br>Total: "+total;
       if(loaded == total) foo.remove();
       // console.log('Loading file: '+item+'.\nLoaded: '+loaded+' of ' +total+' files.');
@@ -116,6 +109,7 @@ function init() {
         200
       );
       goalkeeperContainer.position.y = 3;
+      goalkeeperContainer.position.z = 3;
       goalkeeperContainer.name = 'goalkeeperContainer'
       goalkeeperContainer.add(goalkeeperModel)
       scene.add( goalkeeperContainer )
@@ -135,9 +129,20 @@ function init() {
     // var hex = 0x0000ff;
     // var arrowHelper = new THREE.ArrowHelper( dir, origin, 4, hex,.7,.5 );
     // scene.add( arrowHelper );
-    //door   
+    //doorContianer
+    GoalDoor.mesh.position.z = 5
+    doorContianer = new Physijs.BoxMesh(
+      new THREE.CubeGeometry( 29, 25, 2 ),
+      // new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.0 }),
+      // Uncomment the next line to see the wireframe of the container shape
+      new THREE.MeshBasicMaterial({ wireframe: true }),
+      0
+    );
+    doorContianer.position.z = -10;
+    doorContianer.name = 'doorContianer'
+    doorContianer.add(GoalDoor.mesh)
     
-    scene.add(GoalDoor.mesh)
+    scene.add(doorContianer)
     
     
     
@@ -154,7 +159,7 @@ function init() {
       floorMaterial.map.wrapS = floorMaterial.map.wrapT = floorMaterial.RepeatWrapping;
       floorMaterial.map.repeat.set( 30,30 );
     floor = new Physijs.BoxMesh(
-      new THREE.BoxGeometry( 100, 0.1, 100 ),
+      new THREE.BoxGeometry( 500, 0.3, 500 ),
       floorMaterial,
       0 //mass
     );
@@ -162,14 +167,22 @@ function init() {
     floor.position.set(0,0,0);
     scene.add( floor ); 
 
-  htmlPlayer = document.createElement("div")
-  htmlPlayer.style.position = 'absolute'
-  htmlPlayer.style.top = '60px'
-  htmlPlayer.style.textAlign = 'left'
-  htmlPlayer.style.color = '#1aff3c'
-  htmlPlayer.innerHTML = 'Goal: 0'
-  htmlPlayer.style.textShadow = '0 0 4px #000'
-  document.body.appendChild(htmlPlayer);
+  goalkeeperHtml = document.createElement("div")
+  goalkeeperHtml.style.position = 'absolute'
+  goalkeeperHtml.style.top = '60px'
+  goalkeeperHtml.style.textAlign = 'left'
+  goalkeeperHtml.style.color = '#1aff3c'
+  goalkeeperHtml.innerHTML = 'Goalkeeper: 0'
+  goalkeeperHtml.style.textShadow = '0 0 4px #000'
+  document.body.appendChild(goalkeeperHtml);
+  goalDoorHtml = document.createElement("div")
+  goalDoorHtml.style.position = 'absolute'
+  goalDoorHtml.style.top = '80px'
+  goalDoorHtml.style.textAlign = 'left'
+  goalDoorHtml.style.color = '#eaf02a'
+  goalDoorHtml.innerHTML = 'GoalDoor: 0'
+  goalDoorHtml.style.textShadow = '0 0 4px #000'
+  document.body.appendChild(goalDoorHtml);
     
 
   renderer = new THREE.WebGLRenderer({antialias:true})
@@ -194,9 +207,9 @@ function init() {
 }
 
 
-  handleCollision = function( collided_with, linearVelocity, angularVelocity ) {
+function handleCollision( collided_with ) {
     if(collided_with.name === 'goalkeeperContainer'){
-      console.log("Yo",count++);
+      console.log("goalkeeperContainer",goalkeeperContainerCount++);
       // console.log("Mod",count%10);
       
       if(count%2===0)
@@ -205,6 +218,13 @@ function init() {
         goalkeeperActionKick.play()
       // setTimeout(()=>{
       //   goalkeeperActionKick.stop()
+      //   ,10000
+      // })
+    }
+    if(collided_with.name === 'doorContianer'){
+      console.log('doorContianer',doorContianerCount++);
+      // setTimeout(()=>{
+      //   scene.remove(ballz)
       //   ,10000
       // })
     }
@@ -251,10 +271,6 @@ function onMouseDown(event){
   pos.copy( raycaster.ray.direction );
   pos.multiplyScalar( 180 );
   ballz.setLinearVelocity( new THREE.Vector3( pos.x, pos.y, pos.z ) );
-            // setTimeout(()=>{
-            //   scene.add(ballz)
-            //  ,5000
-            // })
   ballz.addEventListener( 'collision', handleCollision );
   // goalkeeperContainer.addEventListener( 'ready', spawnBox );
   
@@ -303,7 +319,8 @@ function render(){
   // goalkeeperContainer.__dirtyPosition = true;
   goalkeeperContainer.setLinearVelocity(new THREE.Vector3(0, -5, 0));
   // goalkeeperContainer.setAngularVelocity(new THREE.Vector3(2, 3, 5));
-  htmlPlayer.innerHTML = 'Goal: '+count
+  goalkeeperHtml.innerHTML = 'Goalkeeper: '+goalkeeperContainerCount
+  goalDoorHtml.innerHTML = 'GoalDoor: '+doorContianerCount
 
   scene.simulate(); // run physics
   
