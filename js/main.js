@@ -1,4 +1,4 @@
-Physijs.scripts.worker = "./js/physijs_worker.js";
+Physijs.scripts.worker = "./js/lib/physijs_worker.js";
 Physijs.scripts.ammo = "ammo.js";
 var camera, scene, dlight, renderer, effcutout
 
@@ -11,7 +11,8 @@ var raycaster = new THREE.Raycaster()
 var ballz
 var pos = new THREE.Vector3();
 var quat = new THREE.Quaternion();
-
+//goal door class
+var GoalDoor = new GoalDoor();
 //loadingScreen
 var loadingScreen = {
 	scene: new THREE.Scene(),
@@ -135,95 +136,8 @@ function init() {
     // var arrowHelper = new THREE.ArrowHelper( dir, origin, 4, hex,.7,.5 );
     // scene.add( arrowHelper );
     //door   
-    doorLeft = new Physijs.CylinderMesh(new THREE.CylinderGeometry(.5,.5,15,32),  new THREE.MeshPhongMaterial({ color:0x555555}),0)
-    doorLeft.receiveShadow = true
-    doorLeft.position.set(-15,6,0)
-    doorLeft.name = 'door'
-    scene.add( doorLeft )
-    doorRight = new Physijs.CylinderMesh(new THREE.CylinderGeometry(.5,.5,15,32),  new THREE.MeshPhongMaterial({ color:0x555555}),0)
-    doorRight.receiveShadow = true
-    doorRight.castShadow = true
-    doorRight.position.set(15,6,0)
-    doorRight.name = 'door'
-    scene.add( doorRight )
-    doorTop = new Physijs.CylinderMesh(new THREE.CylinderGeometry(.5,.5,31,32),  new THREE.MeshPhongMaterial({ color:0x555555}),0)
-    doorTop.receiveShadow = true
-    doorTop.castShadow = true
-    doorTop.rotation.z=Math.PI/2
-    doorTop.name = 'door'
-    doorTop.position.set(0,13.5,0)
-    scene.add( doorTop )
-    //Vertical
-    for(let i=0;i<20;i++){
-      doorBackV = new Physijs.CylinderMesh(new THREE.CylinderGeometry(.15,.15,15,32),  new THREE.MeshPhongMaterial({ color:0x555555}),0)
-      doorBackV.receiveShadow = true
-      doorBackV.castShadow = true
-      doorBackV.position.set(-14+i*1.5,6,-10)
-      doorBackV.name = 'door'
-      scene.add( doorBackV )
-    }
-    for(let i=0;i<6;i++){
-      doorSideLV = new Physijs.CylinderMesh(new THREE.CylinderGeometry(.15,.15,15,32),  new THREE.MeshPhongMaterial({ color:0x555555}),0)
-      doorSideLV.receiveShadow = true
-      doorSideLV.castShadow = true
-      doorSideLV.position.set(-15,6,-8+i*1.5)
-      doorSideLV.name = 'door'
-      scene.add( doorSideLV )
-    }
-    for(let i=0;i<6;i++){
-      doorSideRV = new Physijs.CylinderMesh(new THREE.CylinderGeometry(.15,.15,15,32),  new THREE.MeshPhongMaterial({ color:0x555555}),0)
-      doorSideRV.receiveShadow = true
-      doorSideRV.castShadow = true
-      doorSideRV.position.set(15,6,-8+i*1.5)
-      doorSideRV.name = 'door'
-      scene.add( doorSideRV )
-    }
-    for(let i=0;i<20;i++){
-      doorTTV = new Physijs.CylinderMesh(new THREE.CylinderGeometry(.15,.15,10,32),  new THREE.MeshPhongMaterial({ color:0x555555}),0)
-      doorTTV.receiveShadow = true
-      doorTTV.castShadow = true
-      doorTTV.position.set(-14+i*1.5,13.5,-5.5)
-      doorTTV.rotation.x = Math.PI/2
-      doorTTV.name = 'door'
-      scene.add( doorTTV )
-    }
-    //Herizontal
-    for(let i=0;i<8;i++){
-      doorBackH = new Physijs.CylinderMesh(new THREE.CylinderGeometry(.15,.15,30,32),  new THREE.MeshPhongMaterial({ color:0x555555}),0)
-      doorBackH.receiveShadow = true
-      doorBackH.castShadow = true
-      doorBackH.position.set(0,2+i*1.5,-10)
-      doorBackH.rotation.z = Math.PI/2
-      doorBackH.name = 'door'
-      scene.add( doorBackH )
-    }
-    for(let i=0;i<8;i++){
-      doorSideLH = new Physijs.CylinderMesh(new THREE.CylinderGeometry(.15,.15,10,32),  new THREE.MeshPhongMaterial({ color:0x555555}),0)
-      doorSideLH.receiveShadow = true
-      doorSideLH.castShadow = true
-      doorSideLH.position.set(-15,2+i*1.5,-5.5)
-      doorSideLH.rotation.x = Math.PI/2
-      doorSideLH.name = 'door'
-      scene.add( doorSideLH )
-    }
-    for(let i=0;i<8;i++){
-      doorSideRH = new Physijs.CylinderMesh(new THREE.CylinderGeometry(.15,.15,10,32),  new THREE.MeshPhongMaterial({ color:0x555555}),0)
-      doorSideRH.receiveShadow = true
-      doorSideRH.castShadow = true
-      doorSideRH.position.set(15,2+i*1.5,-5.5)
-      doorSideRH.rotation.x = Math.PI/2
-      doorSideRH.name = 'door'
-      scene.add( doorSideRH )
-    }
-    for(let i=0;i<6;i++){
-      doorTTH = new Physijs.CylinderMesh(new THREE.CylinderGeometry(.15,.15,31,32),  new THREE.MeshPhongMaterial({ color:0x555555}),0)
-      doorTTH.receiveShadow = true
-      doorTTH.castShadow = true
-      doorTTH.position.set(0,13.5,-10+i*1.5)
-      doorTTH.rotation.z = Math.PI/2
-      doorTTH.name = 'door'
-      scene.add( doorTTH )
-    }
+    
+    scene.add(GoalDoor.mesh)
     
     
     
