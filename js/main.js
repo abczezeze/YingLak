@@ -341,7 +341,7 @@ function init() {
 	  g.add(params,'transparent').onChange(function(value){
 		  wallBack.material.transparent = value;
 		});
-  // gui.open()
+  gui.close()
 }
 
 
