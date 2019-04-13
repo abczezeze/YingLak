@@ -15,7 +15,7 @@ canvas {
 }
 #foo {
 	position: absolute;
-	top: 100px;
+	bottom: 100px;
 	text-align: center;
 	width: 100%;
 	color: #0099ff;
