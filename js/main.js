@@ -23,7 +23,8 @@ var params = {
   multiplyScalar: 180,
   enabled: false,
   wireframe: false, 
-  visible: false, 
+  visible: false,
+  transparent: false,
   sound: false
   };
 //goal door class
@@ -215,8 +216,8 @@ function init() {
     scene.add(doorContianer)
 
     //wall
-    var wallBack = new THREE.Mesh(new THREE.CubeGeometry( 270, 80, 2 ),
-                                  new THREE.MeshBasicMaterial({ color:0x055334, transparent:true, opacity:0.7}))
+    var wallBack = new THREE.Mesh(new THREE.CubeGeometry( 350, 80, 2 ),
+                                  new THREE.MeshBasicMaterial({ color:0x055334, opacity:0.7}))
                                   // new THREE.MeshBasicMaterial({ color:0x055334, transparent:true, opacity:0.4}))
     wallBack.position.z = -42
     wallBack.position.y = 30
@@ -331,6 +332,10 @@ function init() {
         soundsub.play();
       }
     });
+    g = gui.addFolder('Wall');
+	  g.add(params,'transparent').onChange(function(value){
+		  wallBack.material.transparent = value;
+		});
   // gui.open()
 }
 
