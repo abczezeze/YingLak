@@ -33,7 +33,7 @@ var GoalDoor = new GoalDoor();
 var loadingScreen = {
 	scene: new THREE.Scene(),
 	camera: new THREE.PerspectiveCamera(90, window.innerWidth/window.innerHeight, 0.1, 100),
-  box: new THREE.Mesh( new THREE.TorusGeometry( 2,.2,16,32 ), new THREE.MeshPhongMaterial({ color:0x0000dd })),
+  box: new THREE.Mesh( new THREE.TorusGeometry( 1.8,.2,16,32 ), new THREE.MeshPhongMaterial({ color:0x0000dd })),
   directionalLight: new THREE.DirectionalLight( 0xffffff, 0.5 )
 };
 var loadingManager = null;
@@ -280,7 +280,7 @@ function init() {
 
   goalkeeperHtml = document.createElement("div")
   goalkeeperHtml.style.position = 'absolute'
-  goalkeeperHtml.style.top = '60px'
+  goalkeeperHtml.style.bottom = '60px'
   goalkeeperHtml.style.textAlign = 'left'
   goalkeeperHtml.style.color = '#1aff3c'
   goalkeeperHtml.innerHTML = 'Goalkeeper: 0'
@@ -288,7 +288,7 @@ function init() {
   document.body.appendChild(goalkeeperHtml);
   goalDoorHtml = document.createElement("div")
   goalDoorHtml.style.position = 'absolute'
-  goalDoorHtml.style.top = '80px'
+  goalDoorHtml.style.bottom = '80px'
   goalDoorHtml.style.textAlign = 'left'
   goalDoorHtml.style.color = '#eaf02a'
   goalDoorHtml.innerHTML = 'GoalDoor: 0'
