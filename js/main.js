@@ -140,7 +140,8 @@ function init() {
     });
     //ballz
     var ballzTexture = new THREE.TextureLoader(loadingManager).load('Textures/ballTexture.png')
-    var ballzMaterial = Physijs.createMaterial(new THREE.MeshPhongMaterial({ color:0xffffff, map:ballzTexture}))
+    var ballzTexture_nm = new THREE.TextureLoader(loadingManager).load('Textures/ballTexture_normal.png')
+    var ballzMaterial = Physijs.createMaterial(new THREE.MeshPhongMaterial({ color:0xffffff, map:ballzTexture, normalMap:ballzTexture_nm}))
     ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
     ballz.receiveShadow = true
     ballz.castShadow = true
@@ -216,9 +217,13 @@ function init() {
     scene.add(doorContianer)
 
     //wall
+    var wallTexture = new THREE.TextureLoader(loadingManager).load('Textures/Yinglak_bg.png')
+    var walTexture_nm = new THREE.TextureLoader(loadingManager).load('Textures/Yinglak_bg_normal.png')
     var wallBack = new THREE.Mesh(new THREE.CubeGeometry( 350, 80, 2 ),
-                                  new THREE.MeshBasicMaterial({ color:0x055334, opacity:0.7}))
-                                  // new THREE.MeshBasicMaterial({ color:0x055334, transparent:true, opacity:0.4}))
+                                  new THREE.MeshBasicMaterial({ color:0xb8265a, opacity:0.7, map:wallTexture, normalMap:walTexture_nm}))
+                                  // new THREE.MeshBasicMaterial({ color:0x055334, transparent:true, opacity:0.4})
+    console.log(wallBack.material);
+    wallBack.material.mapping = 100                                      
     wallBack.position.z = -42
     wallBack.position.y = 30
     scene.add(wallBack)
