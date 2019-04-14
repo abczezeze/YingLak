@@ -75,11 +75,7 @@ function init() {
       // console.log('Loading file: '+item+'.\nLoaded: '+loaded+' of ' +total+' files.');
     };
 
-    loadingManager.onLoad = function(){
-      // console.log("loaded all resources");
-      RESOURCES_LOADED = true;
-      // foo.remove();
-    };
+    
 
   dlight = new THREE.DirectionalLight( 0xffffff, 1 )
   dlight.position.set( -10, 10, 15 )
@@ -218,9 +214,13 @@ function init() {
 
     //wall
     var wallTexture = new THREE.TextureLoader(loadingManager).load('Textures/Yinglak_bg.png')
-    var walTexture_nm = new THREE.TextureLoader(loadingManager).load('Textures/Yinglak_bg_normal.png')
+    wallTexture.wrapS = THREE.RepeatWrapping;
+    wallTexture.wrapT = THREE.RepeatWrapping;
+    wallTexture.repeat.set( 100, 100 );
+    // var walTexture_nm = new THREE.TextureLoader(loadingManager).load('Textures/Yinglak_bg_normal.png')
     var wallBack = new THREE.Mesh(new THREE.CubeGeometry( 350, 80, 2 ),
-                                  new THREE.MeshBasicMaterial({ color:0xb8265a, opacity:0.7, map:wallTexture, normalMap:walTexture_nm}))
+                                  // new THREE.MeshBasicMaterial({ color:0xb8265a, opacity:0.7, map:wallTexture, normalMap:walTexture_nm}))
+                                  new THREE.MeshBasicMaterial({ color:Math.random()*0xffffff, opacity:0.7, map:wallTexture}))
                                   // new THREE.MeshBasicMaterial({ color:0x055334, transparent:true, opacity:0.4})
     console.log(wallBack.material);
     wallBack.material.mapping = 100                                      
@@ -278,23 +278,8 @@ function init() {
   controls.enabled = false
   // effcutout = new THREE.OutlineEffect(renderer)
 
-  goalkeeperHtml = document.createElement("div")
-  goalkeeperHtml.style.position = 'absolute'
-  goalkeeperHtml.style.bottom = '60px'
-  goalkeeperHtml.style.textAlign = 'left'
-  goalkeeperHtml.style.color = '#1aff3c'
-  goalkeeperHtml.innerHTML = 'Goalkeeper: 0'
-  goalkeeperHtml.style.textShadow = '0 0 4px #000'
-  document.body.appendChild(goalkeeperHtml);
-  goalDoorHtml = document.createElement("div")
-  goalDoorHtml.style.position = 'absolute'
-  goalDoorHtml.style.bottom = '80px'
-  goalDoorHtml.style.textAlign = 'left'
-  goalDoorHtml.style.color = '#eaf02a'
-  goalDoorHtml.innerHTML = 'GoalDoor: 0'
-  goalDoorHtml.style.textShadow = '0 0 4px #000'
-  document.body.appendChild(goalDoorHtml);
-
+    
+  
 
   document.addEventListener( 'mousedown', onMouseDown, false );
   document.addEventListener( 'mousemove', onMouseMove, false );
@@ -306,42 +291,64 @@ function init() {
 
   window.addEventListener('resize',onWindowResize,false)
 
+  loadingManager.onLoad = function(){
+    // console.log("loaded all resources");
+    RESOURCES_LOADED = true;
+    // foo.remove();
+    goalkeeperHtml = document.createElement("div")
+    goalkeeperHtml.style.position = 'absolute'
+    goalkeeperHtml.style.bottom = '60px'
+    goalkeeperHtml.style.textAlign = 'left'
+    goalkeeperHtml.style.color = '#1aff3c'
+    goalkeeperHtml.innerHTML = 'Goalkeeper: 0'
+    goalkeeperHtml.style.textShadow = '0 0 4px #000'
+    document.body.appendChild(goalkeeperHtml);
+    goalDoorHtml = document.createElement("div")
+    goalDoorHtml.style.position = 'absolute'
+    goalDoorHtml.style.bottom = '80px'
+    goalDoorHtml.style.textAlign = 'left'
+    goalDoorHtml.style.color = '#eaf02a'
+    goalDoorHtml.innerHTML = 'GoalDoor: 0'
+    goalDoorHtml.style.textShadow = '0 0 4px #000'
+    document.body.appendChild(goalDoorHtml);
+  
   //GUI
-  var gui = new dat.GUI();
-  var g;
-  g = gui.addFolder('multiplyScalar');
-	  g.add(params,'multiplyScalar',10,200).step(0.01).onChange(function(value){
-      NumberMulti = value
-		  pos.multiplyScalar( value );
-		});
-  g = gui.addFolder('Controls');
-	  g.add(params,'enabled').onChange(function(value){
-		  controls.enabled = value;
-		});
-	g = gui.addFolder('Container');
-    g.add(params,'visible').onChange(function(value){
-      goalkeeperContainer.material.visible = value;
-      doorContianer.material.visible = value;
-      doorCompoundTop.material.visible = value;
-      doorCompoundLeft.material.visible = value;
-      doorCompoundRingt.material.visible = value;
-    });
-    g = gui.addFolder('Soune');
-		g.add(params,'sound').onChange(function(value){
-      if (value){
-        soundYinglak.play() 
-        soundsub.play();
-      }
-      else {
-        soundYinglak.pause()
-        soundsub.play();
-      }
-    });
-    g = gui.addFolder('Wall');
-	  g.add(params,'transparent').onChange(function(value){
-		  wallBack.material.transparent = value;
-		});
-  gui.close()
+    var gui = new dat.GUI();
+    var g;
+    g = gui.addFolder('multiplyScalar');
+      g.add(params,'multiplyScalar',10,200).step(0.01).onChange(function(value){
+        NumberMulti = value
+        pos.multiplyScalar( value );
+      });
+    g = gui.addFolder('Controls');
+      g.add(params,'enabled').onChange(function(value){
+        controls.enabled = value;
+      });
+    g = gui.addFolder('Container');
+      g.add(params,'visible').onChange(function(value){
+        goalkeeperContainer.material.visible = value;
+        doorContianer.material.visible = value;
+        doorCompoundTop.material.visible = value;
+        doorCompoundLeft.material.visible = value;
+        doorCompoundRingt.material.visible = value;
+      });
+      g = gui.addFolder('Soune');
+      g.add(params,'sound').onChange(function(value){
+        if (value){
+          soundYinglak.play() 
+          soundsub.play();
+        }
+        else {
+          soundYinglak.pause()
+          soundsub.play();
+        }
+      });
+      g = gui.addFolder('Wall');
+      g.add(params,'transparent').onChange(function(value){
+        wallBack.material.transparent = value;
+      });
+    gui.close()
+  };
 }
 
 
@@ -405,8 +412,6 @@ function onMouseDown(event){
   mouseCoords.x = (event.clientX/window.innerWidth)*2-1
   mouseCoords.y = -(event.clientY/window.innerHeight)*2+1
 
-
-
   raycaster.setFromCamera(mouseCoords,camera)
   // var intersects = raycaster.intersectObjects(scene.children)
   // Intersects = raycaster.intersectObjects(networkObject)
@@ -444,6 +449,7 @@ function onMouseMove( event ) {
 function animate(){
     // This block runs while resources are loading.
   if( RESOURCES_LOADED == false ){
+  // if( RESOURCES_LOADED == true ){
     requestAnimationFrame(animate);
     // loadingScreen.box.position.x -= 0.05;
     loadingScreen.box.rotation.x -= 0.01;
@@ -466,12 +472,12 @@ function render(){
   // goalkeeperContainer.__dirtyPosition = true;
   goalkeeperContainer.setLinearVelocity(new THREE.Vector3(0, -5, 0));
   // goalkeeperContainer.setAngularVelocity(new THREE.Vector3(2, 3, 5));
-  goalkeeperHtml.innerHTML = 'Goalkeeper: '+goalkeeperContainerCount
-  goalDoorHtml.innerHTML = 'GoalDoor: '+doorContianerCount
-
+  
   scene.simulate(); // run physics
-
+  
   // effcutout.render(scene, camera)
   renderer.render(scene, camera)
+  goalkeeperHtml.innerHTML = 'Goalkeeper: '+goalkeeperContainerCount
+  goalDoorHtml.innerHTML = 'GoalDoor: '+doorContianerCount
 
 }
