@@ -17,7 +17,8 @@ var loaderKickball, soundKickball, listenerKickball = new THREE.AudioListener()
 var loaderGoalkeeper, soundGoalkeeper, listenerGoalkeeper = new THREE.AudioListener()
 var loaderYeee, soundGoalYeee, listenerYeee = new THREE.AudioListener()
 var loaderOhno, soundOhno, listenerOhno = new THREE.AudioListener()
-
+//wall
+var wallBack
 // gui var
 var params = {
   multiplyScalar: 180,
@@ -205,6 +206,15 @@ function init() {
     doorCompoundTop.position.y = 14
     doorCompoundTop.position.z = 4
     doorContianer.add(doorCompoundTop)
+    
+    doorCompoundBack = new Physijs.BoxMesh(
+      new THREE.CubeGeometry( 31, 25, 2 ),
+      new THREE.MeshBasicMaterial({visible: false, wireframe: true}),
+      0
+    );
+    doorCompoundBack.position.y = 8
+    doorCompoundBack.position.z = -13
+    doorContianer.add(doorCompoundBack)
 
     doorContianer.position.z = -10;
     doorContianer.name = 'doorContianer'
@@ -218,14 +228,18 @@ function init() {
     wallTexture.wrapT = THREE.RepeatWrapping;
     wallTexture.repeat.set( 100, 100 );
     // var walTexture_nm = new THREE.TextureLoader(loadingManager).load('Textures/Yinglak_bg_normal.png')
-    var wallBack = new THREE.Mesh(new THREE.CubeGeometry( 350, 80, 2 ),
+    // wallBack = new THREE.Mesh(new THREE.CubeGeometry( 350, 80, 2 ),
+    wallBack = new Physijs.BoxMesh(new THREE.CubeGeometry( 350, 80, 2 ),
                                   // new THREE.MeshBasicMaterial({ color:0xb8265a, opacity:0.7, map:wallTexture, normalMap:walTexture_nm}))
-                                  new THREE.MeshBasicMaterial({ color:Math.random()*0xffffff, opacity:0.7, map:wallTexture}))
+                                  new THREE.MeshBasicMaterial({ color:Math.random()*0xffffff, opacity:0.7, map:wallTexture}),0)
                                   // new THREE.MeshBasicMaterial({ color:0x055334, transparent:true, opacity:0.4})
-    console.log(wallBack.material);
+    // console.log(wallBack.material);
     wallBack.material.mapping = 100                                      
     wallBack.position.z = -42
     wallBack.position.y = 30
+    wallBack.name = 'wallBack'
+    // console.log(wallBack);
+    
     scene.add(wallBack)
 
     //groundphysic
@@ -247,6 +261,7 @@ function init() {
     );
     floor.receiveShadow = true;
     floor.position.set(0,0,0);
+    floor.name = 'floor'
     floor.add( listenerYinglak );
     soundYinglak = new THREE.Audio( listenerYinglak );
     loaderYinglak = new THREE.AudioLoader(loadingManager);
@@ -262,7 +277,7 @@ function init() {
     loaderYinglak.load( 'Sound/YinglakSub.ogg', function( buffer ) {
       soundsub.setBuffer( buffer );
       soundsub.setLoop( true );
-      soundsub.setVolume( 0.2 );
+      soundsub.setVolume( 0.5 );
       // soundsub.play();
     });
     scene.add( floor );
@@ -276,10 +291,7 @@ function init() {
   container.appendChild(renderer.domElement)
   controls = new THREE.OrbitControls(camera)
   controls.enabled = false
-  // effcutout = new THREE.OutlineEffect(renderer)
-
-    
-  
+  // effcutout = new THREE.OutlineEffect(renderer)  
 
   document.addEventListener( 'mousedown', onMouseDown, false );
   document.addEventListener( 'mousemove', onMouseMove, false );
@@ -314,6 +326,8 @@ function init() {
   
   //GUI
     var gui = new dat.GUI();
+    console.log(gui);
+    
     var g;
     g = gui.addFolder('multiplyScalar');
       g.add(params,'multiplyScalar',10,200).step(0.01).onChange(function(value){
@@ -366,15 +380,23 @@ function handleCollision( collided_with ) {
       //   goalkeeperActionKick.stop()
       //   ,10000
       // })
-    }/*else{
-      soundOhno.play()
-    }*/
+    }
+    // console.log(collided_with.name);
+    // console.log(soundOhno);
+    if(collided_with.name === 'wallBack'){
+        soundOhno.play()
+        // scene.remove(ballz)
+      }
+    // if(collided_with.name !== 'doorContianer' && collided_with.name !== 'goalkeeperContainer'  ){
+    //   soundOhno.play()
+    // }
+    
     if(collided_with.name === 'doorContianer'){
       console.log('doorContianer',doorContianerCount++);
       soundGoalYeee.play()
       // setTimeout(()=>{
       //   scene.remove(ballz)
-      //   ,10000
+      //   ,2000
       // })
     }
   }
