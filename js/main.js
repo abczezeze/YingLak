@@ -274,7 +274,7 @@ function init() {
     // console.log(soundYinglak);
     
     var soundsub = new THREE.Audio( listenerYinglak );
-    loaderYinglak.load( 'Sound/YinglakSub.ogg', function( buffer ) {
+    loaderYinglak.load( 'Sound/YingLakSub.ogg', function( buffer ) {
       soundsub.setBuffer( buffer );
       soundsub.setLoop( true );
       soundsub.setVolume( 0.5 );
