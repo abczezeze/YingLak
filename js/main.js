@@ -3,12 +3,13 @@ Physijs.scripts.ammo = "ammo.js";
 var camera, scene, dlight, renderer, effcutout
 var NumberMulti = 180
 var clock = new THREE.Clock()
-var goalkeeperModel, goalkeeperContainer, goalkeeperMixer, goalkeeperAction, goalkeeperConMixer
+var goalkeeperModel, goalkeeperContainer, goalkeeperMixer, goalkeeperAction, goalkeeperActionHaha, goalkeeperActionSad, goalkeeperActionBuzz
 //raycast
 var mouseCoords = new THREE.Vector2()
 var raycaster = new THREE.Raycaster()
 //ball
 var ballz
+var ballzNum = 1
 var pos = new THREE.Vector3();
 var quat = new THREE.Quaternion();
 //sound
@@ -35,6 +36,7 @@ var loadingScreen = {
 	scene: new THREE.Scene(),
 	camera: new THREE.PerspectiveCamera(90, window.innerWidth/window.innerHeight, 0.1, 100),
   box: new THREE.Mesh( new THREE.TorusGeometry( 1.8,.2,16,32 ), new THREE.MeshPhongMaterial({ color:0x0000dd })),
+  box2: new THREE.Mesh( new THREE.TorusGeometry( 1.2,.2,16,32 ), new THREE.MeshPhongMaterial({ color:0x000044 })),
   directionalLight: new THREE.DirectionalLight( 0xffffff, 0.5 )
 };
 var loadingManager = null;
@@ -57,10 +59,12 @@ function init() {
   camera = new THREE.PerspectiveCamera(70,window.innerWidth/window.innerHeight,1,1000)
   camera.position.set(0,10,50)
 
-    loadingScreen// Set up the loading screen's scene.
+    // loadingScreen Set up the loading screen's scene.
     loadingScreen.box.position.set(0,0,5);
+    loadingScreen.box2.position.set(0,0,5);
     loadingScreen.camera.lookAt(loadingScreen.box.position);
     loadingScreen.scene.add(loadingScreen.box);
+    loadingScreen.scene.add(loadingScreen.box2);
     loadingScreen.scene.add(loadingScreen.directionalLight);
     loadingScreen.scene.background = new THREE.Color(0x050555);
 
@@ -93,7 +97,7 @@ function init() {
   scene.add(dlight)
   // model
   var loaderModel = new THREE.GLTFLoader(loadingManager)
-  loaderModel.load( './Models/goalkeeper_gltf/scene.gltf', (object) => {
+  loaderModel.load( './Models/goalkeeper/scene.gltf', (object) => {
     var animations = object.animations;
     goalkeeperModel = object.scene
     // console.log(goalkeeperModel);
@@ -109,7 +113,9 @@ function init() {
       })
       goalkeeperMixer = new THREE.AnimationMixer( goalkeeperModel );
       goalkeeperAction = goalkeeperMixer.clipAction(animations[0])/*.setDuration(10);*/
-      goalkeeperActionKick = goalkeeperMixer.clipAction(animations[1])/*.setDuration(10);*/
+      goalkeeperActionHaha = goalkeeperMixer.clipAction(animations[1])/*.setDuration(10);*/
+      goalkeeperActionSad = goalkeeperMixer.clipAction(animations[2])/*.setDuration(10);*/
+      goalkeeperActionBuzz = goalkeeperMixer.clipAction(animations[3])/*.setDuration(10);*/
       // action.setLoop( THREE.LoopOnce );
       goalkeeperAction.play();
       scene.add( goalkeeperModel );
@@ -140,6 +146,7 @@ function init() {
     var ballzTexture_nm = new THREE.TextureLoader(loadingManager).load('Textures/ballTexture_normal.png')
     var ballzMaterial = Physijs.createMaterial(new THREE.MeshPhongMaterial({ color:0xffffff, map:ballzTexture, normalMap:ballzTexture_nm}))
     ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
+    ballz.name = ballzNum
     ballz.receiveShadow = true
     ballz.castShadow = true
     ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40))
@@ -326,8 +333,7 @@ function init() {
   
   //GUI
     var gui = new dat.GUI();
-    console.log(gui);
-    
+    //console.log(gui);
     var g;
     g = gui.addFolder('multiplyScalar');
       g.add(params,'multiplyScalar',10,200).step(0.01).onChange(function(value){
@@ -370,23 +376,35 @@ function handleCollision( collided_with ) {
     if(collided_with.name === 'goalkeeperContainer'){
       console.log("goalkeeperContainer",goalkeeperContainerCount++);
       soundGoalkeeper.play()
-      // console.log("Mod",count%10);
-
-      if(goalkeeperContainerCount%2===0)
-        goalkeeperActionKick.stop()
-      else
-        goalkeeperActionKick.play()
-      // setTimeout(()=>{
+      // if(goalkeeperContainerCount%2===0)
       //   goalkeeperActionKick.stop()
-      //   ,10000
-      // })
+      // else
+      //   goalkeeperActionKick.play()
+      goalkeeperAction.stop()
+      goalkeeperActionHaha.stop()
+      goalkeeperActionSad.stop()
+      goalkeeperActionBuzz.play()
+      if (ballz.name === ballzNum){
+        scene.remove(ballz)
+        
+      }
     }
     // console.log(collided_with.name);
     // console.log(soundOhno);
     if(collided_with.name === 'wallBack'){
-        soundOhno.play()
-        // scene.remove(ballz)
-      }
+      soundOhno.play()
+      goalkeeperAction.stop()
+      goalkeeperActionHaha.play()
+      goalkeeperActionSad.stop()
+      goalkeeperActionBuzz.stop()
+    }
+    // if(collided_with.name === 'floor'){
+    //   goalkeeperAction.play()
+    //   goalkeeperActionHaha.stop()
+    //   goalkeeperActionSad.stop()
+    //   goalkeeperActionBuzz.stop()
+    // }
+    // scene.remove(ballz)
     // if(collided_with.name !== 'doorContianer' && collided_with.name !== 'goalkeeperContainer'  ){
     //   soundOhno.play()
     // }
@@ -394,9 +412,15 @@ function handleCollision( collided_with ) {
     if(collided_with.name === 'doorContianer'){
       console.log('doorContianer',doorContianerCount++);
       soundGoalYeee.play()
+      goalkeeperActionSad.play()
+      goalkeeperAction.stop()
+      goalkeeperActionHaha.stop()
+      goalkeeperActionBuzz.stop()
+      // goalkeeperAction.stop()
       // setTimeout(()=>{
-      //   scene.remove(ballz)
-      //   ,2000
+      //   goalkeeperAction.play()
+      //   goalkeeperActionSad.stop()
+      //   ,10000
       // })
     }
   }
@@ -461,6 +485,7 @@ function onMouseUp( event ) {
   var ballzMaterial = Physijs.createMaterial(new THREE.MeshPhongMaterial({ color:0xffffff, map:ballzTexture}))
   ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
   ballz.receiveShadow = true;
+  ballz.name = ballzNum
   ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40));
   scene.add(ballz)
 }
@@ -476,7 +501,8 @@ function animate(){
     // loadingScreen.box.position.x -= 0.05;
     loadingScreen.box.rotation.x -= 0.01;
     loadingScreen.box.rotation.y -= 0.01;
-    loadingScreen.box.rotation.z -= 0.01;
+    loadingScreen.box2.rotation.x += 0.01;
+    loadingScreen.box2.rotation.y += 0.01;
     // effcutout.render(loadingScreen.scene, loadingScreen.camera);
     renderer.render(loadingScreen.scene, loadingScreen.camera);
     return; // Stop the function here.
