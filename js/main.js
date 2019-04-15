@@ -179,55 +179,53 @@ function init() {
     scene.add( ballz )
 
     //doorContianer
-    GoalDoor.mesh.position.z = 10
+    GoalDoor.mesh.position.z = 8
     doorContianer = new Physijs.BoxMesh(
-      new THREE.CubeGeometry( 29, 25, 2 ),
-      new THREE.MeshBasicMaterial({visible: false, wireframe: true}),
+      new THREE.CubeGeometry( 29, 25, 5 ),
+      new THREE.MeshBasicMaterial({color:0xff0000, visible: false, wireframe: true}),
       0
     );
-    doorCompoundRingt = new Physijs.BoxMesh(
-      new THREE.CubeGeometry( 2, 14, 12 ),
-      new THREE.MeshBasicMaterial({visible: false, wireframe: true}),
-      0
-    );
-    doorCompoundRingt.position.x = 15
-    doorCompoundRingt.position.y = 8
-    doorCompoundRingt.position.z = 4
-    doorContianer.add(doorCompoundRingt)
+    doorContianer.position.z = -8;
+    doorContianer.name = 'doorContianer'
+    doorContianer.add(GoalDoor.mesh)
+    scene.add(doorContianer)
 
-    doorCompoundLeft = new Physijs.BoxMesh(
-      new THREE.CubeGeometry( 2, 14, 12 ),
-      new THREE.MeshBasicMaterial({visible: false, wireframe: true}),
-      0
-    );
-    doorCompoundLeft.position.x = -15
-    doorCompoundLeft.position.y = 8
-    doorCompoundLeft.position.z = 4
-    doorContianer.add(doorCompoundLeft)
-
+    //edge door
     doorCompoundTop = new Physijs.BoxMesh(
       new THREE.CubeGeometry( 30, 1, 12 ),
       new THREE.MeshBasicMaterial({visible: false, wireframe: true}),
       0
     );
-    doorCompoundTop.position.y = 14
-    doorCompoundTop.position.z = 4
-    doorContianer.add(doorCompoundTop)
-    
-    doorCompoundBack = new Physijs.BoxMesh(
-      new THREE.CubeGeometry( 31, 25, 2 ),
+    doorCompoundTop.position.set(0,14,-5.5)
+
+    doorCompoundRingt = new Physijs.BoxMesh(
+      new THREE.CubeGeometry( 2, 14, 12 ),
       new THREE.MeshBasicMaterial({visible: false, wireframe: true}),
       0
     );
-    doorCompoundBack.position.y = 8
-    doorCompoundBack.position.z = -13
-    doorContianer.add(doorCompoundBack)
+    doorCompoundRingt.position.set(15,-6,0)
+    doorCompoundTop.add(doorCompoundRingt)
+        
+    doorCompoundLeft = new Physijs.BoxMesh(
+      new THREE.CubeGeometry( 2, 14, 12 ),
+      new THREE.MeshBasicMaterial({visible: false, wireframe: true}),
+      0
+    );
+    doorCompoundLeft.position.set(-15,-6,0)
+    doorCompoundTop.add(doorCompoundLeft)
+    
+    // doorCompoundBack = new Physijs.BoxMesh(
+    //   new THREE.CubeGeometry( 31, 25, 2 ),
+    //   new THREE.MeshBasicMaterial({visible: false, wireframe: true}),
+    //   0
+    // );
+    // doorCompoundBack.position.y = -6
+    // doorCompoundBack.position.z = -5
+    // doorCompoundTop.add(doorCompoundBack)
+    doorCompoundTop.name = 'EdgeDoor'
+    scene.add(doorCompoundTop)
 
-    doorContianer.position.z = -10;
-    doorContianer.name = 'doorContianer'
-    doorContianer.add(GoalDoor.mesh)
-
-    scene.add(doorContianer)
+    
 
     //wall
     var wallTexture = new THREE.TextureLoader(loadingManager).load('Textures/Yinglak_bg.png')
@@ -251,11 +249,12 @@ function init() {
 
     //groundphysic
     var grassTexture = new THREE.TextureLoader(loadingManager).load('Textures/GrassGreenTexture_brusheezy.jpg')
-    var grassTexture_nm = new THREE.TextureLoader(loadingManager).load('Textures/GrassGreenTexture_brusheezy_normal.jpg')
+    // var grassTexture_nm = new THREE.TextureLoader(loadingManager).load('Textures/GrassGreenTexture_brusheezy_normal.jpg')
     var friction = 1; // high friction
     var restitution = 0.3; // low restitution
     var floorMaterial = Physijs.createMaterial(
-      new THREE.MeshPhongMaterial({ color:0xffffff, map:grassTexture, normalMap:grassTexture_nm}),
+      // new THREE.MeshPhongMaterial({ color:0xffffff, map:grassTexture, normalMap:grassTexture_nm}),
+      new THREE.MeshPhongMaterial({ color:0xffffff, map:grassTexture}),
         friction,
         restitution
       );
@@ -301,12 +300,11 @@ function init() {
   // effcutout = new THREE.OutlineEffect(renderer)  
 
   document.addEventListener( 'mousedown', onMouseDown, false );
-  document.addEventListener( 'mousemove', onMouseMove, false );
   document.addEventListener( 'mouseup', onMouseUp, false);
+  document.addEventListener( 'mousemove', onMouseMove, false);
 
   document.addEventListener('touchstart',onTouchStart,false)
   document.addEventListener('touchend',onMouseUp,false)
-  // document.addEventListener('touchend',onTouchEnd,false)
 
   window.addEventListener('resize',onWindowResize,false)
 
@@ -373,31 +371,47 @@ function init() {
 
 
 function handleCollision( collided_with ) {
-    if(collided_with.name === 'goalkeeperContainer'){
-      console.log("goalkeeperContainer",goalkeeperContainerCount++);
-      soundGoalkeeper.play()
-      // if(goalkeeperContainerCount%2===0)
-      //   goalkeeperActionKick.stop()
-      // else
-      //   goalkeeperActionKick.play()
-      goalkeeperAction.stop()
-      goalkeeperActionHaha.stop()
-      goalkeeperActionSad.stop()
-      goalkeeperActionBuzz.play()
-      if (ballz.name === ballzNum){
-        scene.remove(ballz)
-        
-      }
-    }
-    // console.log(collided_with.name);
-    // console.log(soundOhno);
-    if(collided_with.name === 'wallBack'){
-      soundOhno.play()
-      goalkeeperAction.stop()
-      goalkeeperActionHaha.play()
-      goalkeeperActionSad.stop()
-      goalkeeperActionBuzz.stop()
-    }
+  if(collided_with.name === 'goalkeeperContainer'){
+    console.log("goalkeeperContainer",goalkeeperContainerCount++);
+    soundGoalkeeper.play()
+    // if(goalkeeperContainerCount%2===0)
+    //   goalkeeperActionKick.stop()
+    // else
+    //   goalkeeperActionKick.play()
+    goalkeeperAction.stop()
+    goalkeeperActionHaha.stop()
+    goalkeeperActionSad.stop()
+    goalkeeperActionBuzz.play()
+    console.log('coi',ballz);
+      
+    scene.remove(ballz)
+  
+    var ballzTexture = new THREE.TextureLoader(loadingManager).load('Textures/ballTexture.png')
+    var ballzMaterial = Physijs.createMaterial(new THREE.MeshPhongMaterial({ color:0xffffff, map:ballzTexture}))
+    ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
+    ballz.receiveShadow = true;
+    ballz.name = ballzNum++
+    ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40));
+    scene.add(ballz)
+  }
+  if(collided_with.name === 'wallBack' || collided_with.name === 'EdgeDoor'){
+    soundOhno.play()
+    goalkeeperAction.stop()
+    goalkeeperActionHaha.play()
+    goalkeeperActionSad.stop()
+    goalkeeperActionBuzz.stop()
+
+    scene.remove(ballz)
+  
+    var ballzTexture = new THREE.TextureLoader(loadingManager).load('Textures/ballTexture.png')
+    var ballzMaterial = Physijs.createMaterial(new THREE.MeshPhongMaterial({ color:0xffffff, map:ballzTexture}))
+    ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
+    ballz.receiveShadow = true;
+    ballz.name = ballzNum++
+    ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40));
+    scene.add(ballz)
+  }
+  
     // if(collided_with.name === 'floor'){
     //   goalkeeperAction.play()
     //   goalkeeperActionHaha.stop()
@@ -409,20 +423,27 @@ function handleCollision( collided_with ) {
     //   soundOhno.play()
     // }
     
-    if(collided_with.name === 'doorContianer'){
-      console.log('doorContianer',doorContianerCount++);
-      soundGoalYeee.play()
-      goalkeeperActionSad.play()
-      goalkeeperAction.stop()
-      goalkeeperActionHaha.stop()
-      goalkeeperActionBuzz.stop()
-      // goalkeeperAction.stop()
-      // setTimeout(()=>{
-      //   goalkeeperAction.play()
-      //   goalkeeperActionSad.stop()
-      //   ,10000
-      // })
-    }
+  if(collided_with.name === 'doorContianer'){
+    console.log('doorContianer',doorContianerCount++);
+    soundGoalYeee.play()
+    goalkeeperActionSad.play()
+    goalkeeperAction.stop()
+    goalkeeperActionHaha.stop()
+    goalkeeperActionBuzz.stop()
+
+    // setTimeout(()=>{
+    //   scene.remove(ballz)
+    //   ,3000
+    // })
+    
+    var ballzTexture = new THREE.TextureLoader(loadingManager).load('Textures/ballTexture.png')
+    var ballzMaterial = Physijs.createMaterial(new THREE.MeshPhongMaterial({ color:0xffffff, map:ballzTexture}))
+    ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
+    ballz.receiveShadow = true;
+    ballz.name = ballzNum++
+    ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40));
+    scene.add(ballz)
+    }  
   }
 
 function onWindowResize() {
@@ -443,7 +464,7 @@ function onTouchStart( event ) {
 }
 function onTouchEnd( event ) {
   event.preventDefault()
-  console.log(event);
+  // console.log(event);
   mouseCoords.x = event.changedTouches[0].clientX
   mouseCoords.y = event.changedTouches[0].clientY
   // event.clientX = +(event.touches[0].clientX/window.innerWidth)*2-1
@@ -480,18 +501,13 @@ function onMouseDown(event){
   // goalkeeperContainer.setAngularVelocity(new THREE.Vector3(0, 0, 0));
 }
 function onMouseUp( event ) {
-
-  var ballzTexture = new THREE.TextureLoader(loadingManager).load('Textures/ballTexture.png')
-  var ballzMaterial = Physijs.createMaterial(new THREE.MeshPhongMaterial({ color:0xffffff, map:ballzTexture}))
-  ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
-  ballz.receiveShadow = true;
-  ballz.name = ballzNum
-  ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40));
-  scene.add(ballz)
+  
 }
 function onMouseMove( event ) {
-  // console.log(event.buttons);
+  console.log(event.clientX,event.clientY);
+  
 }
+
 
 function animate(){
     // This block runs while resources are loading.
