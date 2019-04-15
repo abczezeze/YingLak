@@ -8,7 +8,7 @@ var goalkeeperModel, goalkeeperContainer, goalkeeperMixer, goalkeeperAction, goa
 var mouseCoords = new THREE.Vector2()
 var raycaster = new THREE.Raycaster()
 //ball
-var ballz
+var ballz, ballzMaterial, ballzTexture, ballzTexture_nm
 var ballzNum = 1
 var pos = new THREE.Vector3();
 var quat = new THREE.Quaternion();
@@ -142,9 +142,9 @@ function init() {
       scene.add( goalkeeperContainer )
     });
     //ballz
-    var ballzTexture = new THREE.TextureLoader(loadingManager).load('Textures/ballTexture.png')
-    var ballzTexture_nm = new THREE.TextureLoader(loadingManager).load('Textures/ballTexture_normal.png')
-    var ballzMaterial = Physijs.createMaterial(new THREE.MeshPhongMaterial({ color:0xffffff, map:ballzTexture, normalMap:ballzTexture_nm}))
+    ballzTexture = new THREE.TextureLoader(loadingManager).load('Textures/ballTexture.png')
+    ballzTexture_nm = new THREE.TextureLoader(loadingManager).load('Textures/ballTexture_normal.png')
+    ballzMaterial = Physijs.createMaterial(new THREE.MeshPhongMaterial({ color:0xffffff, map:ballzTexture, normalMap:ballzTexture_nm}))
     ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
     ballz.name = ballzNum
     ballz.receiveShadow = true
@@ -179,13 +179,13 @@ function init() {
     scene.add( ballz )
 
     //doorContianer
-    GoalDoor.mesh.position.z = 8
+    GoalDoor.mesh.position.z = 6
     doorContianer = new Physijs.BoxMesh(
-      new THREE.CubeGeometry( 29, 25, 5 ),
+      new THREE.CubeGeometry( 29, 25, 13 ),
       new THREE.MeshBasicMaterial({color:0xff0000, visible: false, wireframe: true}),
       0
     );
-    doorContianer.position.z = -8;
+    doorContianer.position.z = -5;
     doorContianer.name = 'doorContianer'
     doorContianer.add(GoalDoor.mesh)
     scene.add(doorContianer)
@@ -374,22 +374,16 @@ function handleCollision( collided_with ) {
   if(collided_with.name === 'goalkeeperContainer'){
     console.log("goalkeeperContainer",goalkeeperContainerCount++);
     soundGoalkeeper.play()
-    // if(goalkeeperContainerCount%2===0)
-    //   goalkeeperActionKick.stop()
-    // else
-    //   goalkeeperActionKick.play()
     goalkeeperAction.stop()
     goalkeeperActionHaha.stop()
     goalkeeperActionSad.stop()
     goalkeeperActionBuzz.play()
-    console.log('coi',ballz);
       
     scene.remove(ballz)
   
-    var ballzTexture = new THREE.TextureLoader(loadingManager).load('Textures/ballTexture.png')
-    var ballzMaterial = Physijs.createMaterial(new THREE.MeshPhongMaterial({ color:0xffffff, map:ballzTexture}))
     ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
     ballz.receiveShadow = true;
+    ballz.castShadow = true
     ballz.name = ballzNum++
     ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40));
     scene.add(ballz)
@@ -403,10 +397,9 @@ function handleCollision( collided_with ) {
 
     scene.remove(ballz)
   
-    var ballzTexture = new THREE.TextureLoader(loadingManager).load('Textures/ballTexture.png')
-    var ballzMaterial = Physijs.createMaterial(new THREE.MeshPhongMaterial({ color:0xffffff, map:ballzTexture}))
     ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
     ballz.receiveShadow = true;
+    ballz.castShadow = true
     ballz.name = ballzNum++
     ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40));
     scene.add(ballz)
@@ -432,14 +425,13 @@ function handleCollision( collided_with ) {
     goalkeeperActionBuzz.stop()
 
     // setTimeout(()=>{
-    //   scene.remove(ballz)
+      scene.remove(ballz)
     //   ,3000
     // })
     
-    var ballzTexture = new THREE.TextureLoader(loadingManager).load('Textures/ballTexture.png')
-    var ballzMaterial = Physijs.createMaterial(new THREE.MeshPhongMaterial({ color:0xffffff, map:ballzTexture}))
     ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
     ballz.receiveShadow = true;
+    ballz.castShadow = true
     ballz.name = ballzNum++
     ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40));
     scene.add(ballz)
