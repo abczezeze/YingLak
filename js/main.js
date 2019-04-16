@@ -19,7 +19,7 @@ var loaderGoalkeeper, soundGoalkeeper, listenerGoalkeeper = new THREE.AudioListe
 var loaderYeee, soundGoalYeee, listenerYeee = new THREE.AudioListener()
 var loaderOhno, soundOhno, listenerOhno = new THREE.AudioListener()
 //wall
-var wallBack
+var wallBack, wallSpace
 // gui var
 var params = {
   multiplyScalar: 180,
@@ -149,7 +149,7 @@ function init() {
     ballz.name = ballzNum
     ballz.receiveShadow = true
     ballz.castShadow = true
-    ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40))
+    ballz.position.set(0,2,31)
  
     ballz.add(listenerKickball)
     loaderKickball = new THREE.AudioLoader(loadingManager);
@@ -181,13 +181,38 @@ function init() {
     //doorContianer
     GoalDoor.mesh.position.z = 6
     doorContianer = new Physijs.BoxMesh(
-      new THREE.CubeGeometry( 29, 25, 13 ),
+      new THREE.CubeGeometry( 29, 29, 5 ),
       new THREE.MeshBasicMaterial({color:0xff0000, visible: false, wireframe: true}),
       0
     );
-    doorContianer.position.z = -5;
+    doorContianer.position.z = -7;
     doorContianer.name = 'doorContianer'
     doorContianer.add(GoalDoor.mesh)
+
+    doorContianerTop = new Physijs.BoxMesh(
+      new THREE.CubeGeometry( 30, 1, 8 ),
+      new THREE.MeshBasicMaterial({color:0xff0000, visible: false, wireframe: true}),
+      0
+    );
+    doorContianerTop.position.set(0,14,0)
+    doorContianer.add(doorContianerTop)
+
+    doorContianerRingt = new Physijs.BoxMesh(
+      new THREE.CubeGeometry( 2, 14, 10 ),
+      new THREE.MeshBasicMaterial({color:0xff0000, visible: false, wireframe: true}),
+      0
+    );
+    doorContianerRingt.position.set(14,5,0)
+    doorContianer.add(doorContianerRingt)
+        
+    doorContianerLeft = new Physijs.BoxMesh(
+      new THREE.CubeGeometry( 2, 14, 10 ),
+      new THREE.MeshBasicMaterial({color:0xff0000, visible: false, wireframe: true}),
+      0
+    );
+    doorContianerLeft.position.set(-14,5,0)
+    doorContianer.add(doorContianerLeft)
+    
     scene.add(doorContianer)
 
     //edge door
@@ -203,7 +228,7 @@ function init() {
       new THREE.MeshBasicMaterial({visible: false, wireframe: true}),
       0
     );
-    doorCompoundRingt.position.set(15,-6,0)
+    doorCompoundRingt.position.set(15,-7,0)
     doorCompoundTop.add(doorCompoundRingt)
         
     doorCompoundLeft = new Physijs.BoxMesh(
@@ -211,17 +236,8 @@ function init() {
       new THREE.MeshBasicMaterial({visible: false, wireframe: true}),
       0
     );
-    doorCompoundLeft.position.set(-15,-6,0)
+    doorCompoundLeft.position.set(-15,-7,0)
     doorCompoundTop.add(doorCompoundLeft)
-    
-    // doorCompoundBack = new Physijs.BoxMesh(
-    //   new THREE.CubeGeometry( 31, 25, 2 ),
-    //   new THREE.MeshBasicMaterial({visible: false, wireframe: true}),
-    //   0
-    // );
-    // doorCompoundBack.position.y = -6
-    // doorCompoundBack.position.z = -5
-    // doorCompoundTop.add(doorCompoundBack)
     doorCompoundTop.name = 'EdgeDoor'
     scene.add(doorCompoundTop)
 
@@ -231,7 +247,7 @@ function init() {
     var wallTexture = new THREE.TextureLoader(loadingManager).load('Textures/Yinglak_bg.png')
     wallTexture.wrapS = THREE.RepeatWrapping;
     wallTexture.wrapT = THREE.RepeatWrapping;
-    wallTexture.repeat.set( 100, 100 );
+    wallTexture.repeat.set( 100, 40 );
     // var walTexture_nm = new THREE.TextureLoader(loadingManager).load('Textures/Yinglak_bg_normal.png')
     // wallBack = new THREE.Mesh(new THREE.CubeGeometry( 350, 80, 2 ),
     wallBack = new Physijs.BoxMesh(new THREE.CubeGeometry( 350, 80, 2 ),
@@ -239,13 +255,30 @@ function init() {
                                   new THREE.MeshBasicMaterial({ color:Math.random()*0xffffff, opacity:0.7, map:wallTexture}),0)
                                   // new THREE.MeshBasicMaterial({ color:0x055334, transparent:true, opacity:0.4})
     // console.log(wallBack.material);
-    wallBack.material.mapping = 100                                      
     wallBack.position.z = -42
     wallBack.position.y = 30
     wallBack.name = 'wallBack'
-    // console.log(wallBack);
-    
     scene.add(wallBack)
+
+    wallSpace = new Physijs.BoxMesh(new THREE.CubeGeometry( 100, 80, 2 ),
+                new THREE.MeshBasicMaterial({ color:0x00ffff, wireframe:true, visible:false}),0)
+    wallSpace.position.set(0,10,45)
+    wallSpaceL = new Physijs.BoxMesh(new THREE.CubeGeometry( 2, 80, 100 ),
+                new THREE.MeshBasicMaterial({ color:0x00ffff, wireframe:true, visible:false}),0)
+    wallSpaceL.position.set(42,0,-35)
+    wallSpace.add(wallSpaceL)
+    wallSpaceR = new Physijs.BoxMesh(new THREE.CubeGeometry( 2, 80, 100 ),
+                new THREE.MeshBasicMaterial({ color:0x00ffff, wireframe:true, visible:false}),0)
+    wallSpaceR.position.set(-42,0,-35)
+    wallSpace.add(wallSpaceR)
+    wallSpaceT = new Physijs.BoxMesh(new THREE.CubeGeometry( 100, 2, 100 ),
+                new THREE.MeshBasicMaterial({ color:0x00ffff, wireframe:true, visible:false}),0)
+    wallSpaceT.position.set(0,40,-35)
+    wallSpace.add(wallSpaceT)
+    wallSpace.name = 'wallSpace'
+    scene.add(wallSpace)
+    
+
 
     //groundphysic
     var grassTexture = new THREE.TextureLoader(loadingManager).load('Textures/GrassGreenTexture_brusheezy.jpg')
@@ -346,9 +379,17 @@ function init() {
       g.add(params,'visible').onChange(function(value){
         goalkeeperContainer.material.visible = value;
         doorContianer.material.visible = value;
+        doorContianerTop.material.visible = value;
+        doorContianerRingt.material.visible = value;
+        doorContianerLeft.material.visible = value;
+        
         doorCompoundTop.material.visible = value;
         doorCompoundLeft.material.visible = value;
         doorCompoundRingt.material.visible = value;
+        wallSpace.material.visible = value;
+        wallSpaceL.material.visible = value;
+        wallSpaceR.material.visible = value;
+        wallSpaceT.material.visible = value;
       });
       g = gui.addFolder('Soune');
       g.add(params,'sound').onChange(function(value){
@@ -405,7 +446,7 @@ function handleCollision( collided_with ) {
     // scene.add(ballz)
   }
   
-    if(collided_with.name === 'floor' || collided_with.name === 'wallBack'){
+    if(collided_with.name === 'floor' || collided_with.name === 'wallBack' || collided_with.name === 'wallSpace'){
     //   goalkeeperAction.play()
     //   goalkeeperActionHaha.stop()
     //   goalkeeperActionSad.stop()
@@ -417,7 +458,7 @@ function handleCollision( collided_with ) {
     ballz.receiveShadow = true;
     ballz.castShadow = true
     ballz.name = ballzNum++
-    ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40));
+    ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,35));
     scene.add(ballz)
 
     }
@@ -453,11 +494,6 @@ function onWindowResize() {
 }
 
 function onTouchStart( event ) {
-  // event.preventDefault()
-  // event.clientX = event.touches[0].clientX
-  // event.clientY = event.touches[0].clientY
-  // mouseCoords.x = +(event.targetTouches[0].pageX / window.innerWidth) * 2 +-1;
-  // mouseCoords.y = -(event.targetTouches[0].pageY / window.innerHeight) * 2 + 1;
   if(event.touches) {
     // playerX = e.touches[0].pageX - canvas.offsetLeft - playerWidth / 2;
     // playerY = e.touches[0].pageY - canvas.offsetTop - playerHeight / 2;
@@ -470,14 +506,6 @@ function onTouchStart( event ) {
 }
 function onTouchEnd( event ) {
   event.preventDefault()
-  // mouseCoords.x = event.changedTouches[0].clientX
-  // mouseCoords.y = event.changedTouches[0].clientY
-  // event.clientX = +(event.touches[0].clientX/window.innerWidth)*2-1
-  // event.clientY = -(event.touches[0].clientY/window.innerHeight)*2+1
-  // mouseCoords.x = (event.touches[0].clientX/window.innerWidth)*2-1
-  // mouseCoords.y = -(event.touches[0].clientY/window.innerHeight)*2+1
-  // raycaster.setFromCamera(mouseCoords,camera)
-  // onMouseDown( event )
 }
 function onMouseDown(event){
   event.preventDefault()
