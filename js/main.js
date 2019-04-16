@@ -379,14 +379,14 @@ function handleCollision( collided_with ) {
     goalkeeperActionSad.stop()
     goalkeeperActionBuzz.play()
       
-    scene.remove(ballz)
+    // scene.remove(ballz)
   
-    ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
-    ballz.receiveShadow = true;
-    ballz.castShadow = true
-    ballz.name = ballzNum++
-    ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40));
-    scene.add(ballz)
+    // ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
+    // ballz.receiveShadow = true;
+    // ballz.castShadow = true
+    // ballz.name = ballzNum++
+    // ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40));
+    // scene.add(ballz)
   }
   if(collided_with.name === 'wallBack' || collided_with.name === 'EdgeDoor'){
     soundOhno.play()
@@ -394,6 +394,22 @@ function handleCollision( collided_with ) {
     goalkeeperActionHaha.play()
     goalkeeperActionSad.stop()
     goalkeeperActionBuzz.stop()
+
+    // scene.remove(ballz)
+  
+    // ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
+    // ballz.receiveShadow = true;
+    // ballz.castShadow = true
+    // ballz.name = ballzNum++
+    // ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40));
+    // scene.add(ballz)
+  }
+  
+    if(collided_with.name === 'floor' || collided_with.name === 'wallBack'){
+    //   goalkeeperAction.play()
+    //   goalkeeperActionHaha.stop()
+    //   goalkeeperActionSad.stop()
+    //   goalkeeperActionBuzz.stop()
 
     scene.remove(ballz)
   
@@ -403,18 +419,8 @@ function handleCollision( collided_with ) {
     ballz.name = ballzNum++
     ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40));
     scene.add(ballz)
-  }
-  
-    // if(collided_with.name === 'floor'){
-    //   goalkeeperAction.play()
-    //   goalkeeperActionHaha.stop()
-    //   goalkeeperActionSad.stop()
-    //   goalkeeperActionBuzz.stop()
-    // }
-    // scene.remove(ballz)
-    // if(collided_with.name !== 'doorContianer' && collided_with.name !== 'goalkeeperContainer'  ){
-    //   soundOhno.play()
-    // }
+
+    }
     
   if(collided_with.name === 'doorContianer'){
     console.log('doorContianer',doorContianerCount++);
@@ -425,16 +431,16 @@ function handleCollision( collided_with ) {
     goalkeeperActionBuzz.stop()
 
     // setTimeout(()=>{
-      scene.remove(ballz)
+      // scene.remove(ballz)
     //   ,3000
     // })
     
-    ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
-    ballz.receiveShadow = true;
-    ballz.castShadow = true
-    ballz.name = ballzNum++
-    ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40));
-    scene.add(ballz)
+    // ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
+    // ballz.receiveShadow = true;
+    // ballz.castShadow = true
+    // ballz.name = ballzNum++
+    // ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40));
+    // scene.add(ballz)
     }  
   }
 
@@ -447,18 +453,25 @@ function onWindowResize() {
 }
 
 function onTouchStart( event ) {
-  event.preventDefault()
+  // event.preventDefault()
   // event.clientX = event.touches[0].clientX
   // event.clientY = event.touches[0].clientY
-  mouseCoords.x = +(event.targetTouches[0].pageX / window.innerWidth) * 2 +-1;
-  mouseCoords.y = -(event.targetTouches[0].pageY / window.innerHeight) * 2 + 1;
+  // mouseCoords.x = +(event.targetTouches[0].pageX / window.innerWidth) * 2 +-1;
+  // mouseCoords.y = -(event.targetTouches[0].pageY / window.innerHeight) * 2 + 1;
+  if(event.touches) {
+    // playerX = e.touches[0].pageX - canvas.offsetLeft - playerWidth / 2;
+    // playerY = e.touches[0].pageY - canvas.offsetTop - playerHeight / 2;
+    // output.innerHTML = "Touch: "+ " x: " + playerX + ", y: " + playerY;
+    console.log('Touch',event.touches[0].pageX,event.touches[0].pageY);
+    
+    event.preventDefault();
+  }
   onMouseDown( event )
 }
 function onTouchEnd( event ) {
   event.preventDefault()
-  // console.log(event);
-  mouseCoords.x = event.changedTouches[0].clientX
-  mouseCoords.y = event.changedTouches[0].clientY
+  // mouseCoords.x = event.changedTouches[0].clientX
+  // mouseCoords.y = event.changedTouches[0].clientY
   // event.clientX = +(event.touches[0].clientX/window.innerWidth)*2-1
   // event.clientY = -(event.touches[0].clientY/window.innerHeight)*2+1
   // mouseCoords.x = (event.touches[0].clientX/window.innerWidth)*2-1
@@ -496,7 +509,7 @@ function onMouseUp( event ) {
   
 }
 function onMouseMove( event ) {
-  console.log(event.clientX,event.clientY);
+  // console.log(event.clientX,event.clientY);
   
 }
 
