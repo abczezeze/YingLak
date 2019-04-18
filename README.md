@@ -6,3 +6,4 @@ about shoot a ball 3D
 <br><img src='https://abc3dz.github.io/YingLak/ss/comart.gif' width=40% hight=40%>
 <br>
 <br>Convert to .apk by Cordova upload on <a href='https://abc3dz.itch.io/yinglaek'>itch</a>
+<br><img src="https://github.com/abc3dz/YingLak/blob/master/ss/IMG_20190416_122251.jpg" width="30%" height="30%">
