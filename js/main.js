@@ -194,7 +194,7 @@ function init() {
       new THREE.MeshBasicMaterial({color:0xff0000, visible: false, wireframe: true}),
       0
     );
-    doorContianerTop.position.set(0,14,0)
+    doorContianerTop.position.set(0,13,0)
     doorContianer.add(doorContianerTop)
 
     doorContianerRingt = new Physijs.BoxMesh(
@@ -221,14 +221,14 @@ function init() {
       new THREE.MeshBasicMaterial({visible: false, wireframe: true}),
       0
     );
-    doorCompoundTop.position.set(0,14,-5.5)
+    doorCompoundTop.position.set(0,15,-5.5)
 
     doorCompoundRingt = new Physijs.BoxMesh(
       new THREE.CubeGeometry( 2, 14, 12 ),
       new THREE.MeshBasicMaterial({visible: false, wireframe: true}),
       0
     );
-    doorCompoundRingt.position.set(15,-7,0)
+    doorCompoundRingt.position.set(15.5,-7,-1)
     doorCompoundTop.add(doorCompoundRingt)
         
     doorCompoundLeft = new Physijs.BoxMesh(
@@ -236,7 +236,7 @@ function init() {
       new THREE.MeshBasicMaterial({visible: false, wireframe: true}),
       0
     );
-    doorCompoundLeft.position.set(-15,-7,0)
+    doorCompoundLeft.position.set(-15.5,-7,-1)
     doorCompoundTop.add(doorCompoundLeft)
     doorCompoundTop.name = 'EdgeDoor'
     scene.add(doorCompoundTop)
