@@ -9,7 +9,7 @@ var mouseCoords = new THREE.Vector2()
 var raycaster = new THREE.Raycaster()
 //ball
 var ballz, ballzMaterial, ballzTexture, ballzTexture_nm
-var ballzNum = 1
+var ballzNum = 1, ballzStart = true
 var pos = new THREE.Vector3();
 var quat = new THREE.Quaternion();
 //sound
@@ -182,7 +182,7 @@ function init() {
     GoalDoor.mesh.position.z = 6
     doorContianer = new Physijs.BoxMesh(
       new THREE.CubeGeometry( 29, 29, 5 ),
-      new THREE.MeshBasicMaterial({color:0xff0000, visible: false, wireframe: true}),
+      new THREE.MeshBasicMaterial({color:0xff0000, visible: false, transparent:true, opacity:.5}),
       0
     );
     doorContianer.position.z = -7;
@@ -190,8 +190,8 @@ function init() {
     doorContianer.add(GoalDoor.mesh)
 
     doorContianerTop = new Physijs.BoxMesh(
-      new THREE.CubeGeometry( 30, 1, 8 ),
-      new THREE.MeshBasicMaterial({color:0xff0000, visible: false, wireframe: true}),
+      new THREE.CubeGeometry( 30, 1, 10 ),
+      new THREE.MeshBasicMaterial({color:0xff0000, visible: false, transparent:true, opacity:.5}),
       0
     );
     doorContianerTop.position.set(0,13,0)
@@ -199,7 +199,7 @@ function init() {
 
     doorContianerRingt = new Physijs.BoxMesh(
       new THREE.CubeGeometry( 2, 14, 10 ),
-      new THREE.MeshBasicMaterial({color:0xff0000, visible: false, wireframe: true}),
+      new THREE.MeshBasicMaterial({color:0xff0000, visible: false, transparent:true, opacity:.5}),
       0
     );
     doorContianerRingt.position.set(14,5,0)
@@ -207,7 +207,7 @@ function init() {
         
     doorContianerLeft = new Physijs.BoxMesh(
       new THREE.CubeGeometry( 2, 14, 10 ),
-      new THREE.MeshBasicMaterial({color:0xff0000, visible: false, wireframe: true}),
+      new THREE.MeshBasicMaterial({color:0xff0000, visible: false, transparent:true, opacity:.5}),
       0
     );
     doorContianerLeft.position.set(-14,5,0)
@@ -340,6 +340,29 @@ function init() {
   document.addEventListener('touchend',onMouseUp,false)
 
   window.addEventListener('resize',onWindowResize,false)
+  window.addEventListener( 'keydown', ( event ) => {
+    switch ( event.keyCode ) {
+      case 90: //z
+        goalkeeperContainer.material.visible = !goalkeeperContainer.material.visible
+        doorContianer.material.visible = !doorContianer.material.visible
+        doorContianerTop.material.visible = !doorContianerTop.material.visible
+        doorContianerRingt.material.visible = !doorContianerRingt.material.visible
+        doorContianerLeft.material.visible = !doorContianerLeft.material.visible
+        
+        doorCompoundTop.material.visible = !doorCompoundTop.material.visible
+        doorCompoundLeft.material.visible = !doorCompoundLeft.material.visible
+        doorCompoundRingt.material.visible = !doorCompoundRingt.material.visible
+        wallSpace.material.visible = !wallSpace.material.visible
+        wallSpaceL.material.visible = !wallSpaceL.material.visible
+        wallSpaceR.material.visible = !wallSpaceR.material.visible
+        wallSpaceT.material.visible = !wallSpaceT.material.visible
+      break;
+      case 88://x
+        controls.enabled = !controls.enabled
+    }
+  });
+  console.log("Press Z: Visible collision box\nPress X: Control camera");
+  
 
   loadingManager.onLoad = function(){
     // console.log("loaded all resources");
@@ -451,7 +474,8 @@ function handleCollision( collided_with ) {
     //   goalkeeperActionHaha.stop()
     //   goalkeeperActionSad.stop()
     //   goalkeeperActionBuzz.stop()
-
+    
+    ballzStart = true
     scene.remove(ballz)
   
     ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
@@ -494,44 +518,48 @@ function onWindowResize() {
 }
 
 function onTouchStart( event ) {
+  event.preventDefault();
+  event.clientX = event.touches[0].clientX;
+	event.clientY = event.touches[0].clientY;
   if(event.touches) {
     // playerX = e.touches[0].pageX - canvas.offsetLeft - playerWidth / 2;
     // playerY = e.touches[0].pageY - canvas.offsetTop - playerHeight / 2;
     // output.innerHTML = "Touch: "+ " x: " + playerX + ", y: " + playerY;
     console.log('Touch',event.touches[0].pageX,event.touches[0].pageY);
-    
-    event.preventDefault();
   }
   onMouseDown( event )
 }
 function onTouchEnd( event ) {
-  event.preventDefault()
+
 }
 function onMouseDown(event){
-  event.preventDefault()
-  mouseCoords.x = (event.clientX/window.innerWidth)*2-1
-  mouseCoords.y = -(event.clientY/window.innerHeight)*2+1
+  console.log("mouse down");
+  if(ballzStart){
+    event.preventDefault()
+    mouseCoords.x = (event.clientX/window.innerWidth)*2-1
+    mouseCoords.y = -(event.clientY/window.innerHeight)*2+1
 
-  raycaster.setFromCamera(mouseCoords,camera)
-  // var intersects = raycaster.intersectObjects(scene.children)
-  // Intersects = raycaster.intersectObjects(networkObject)
+    raycaster.setFromCamera(mouseCoords,camera)
+    // var intersects = raycaster.intersectObjects(scene.children)
+    // Intersects = raycaster.intersectObjects(networkObject)
+    ballz.position.copy(raycaster.ray.direction);
+    ballz.position.add(raycaster.ray.origin);
+    pos.copy( raycaster.ray.direction );
+    pos.multiplyScalar( NumberMulti );
+    ballz.setLinearVelocity( new THREE.Vector3( pos.x, pos.y, pos.z ) );
+    soundKickball.play()
+    ballz.addEventListener( 'collision', handleCollision );
+    // goalkeeperContainer.addEventListener( 'ready', spawnBox );
 
-  ballz.position.copy(raycaster.ray.direction);
-  ballz.position.add(raycaster.ray.origin);
-  pos.copy( raycaster.ray.direction );
-  pos.multiplyScalar( NumberMulti );
-  ballz.setLinearVelocity( new THREE.Vector3( pos.x, pos.y, pos.z ) );
-  soundKickball.play()
-  ballz.addEventListener( 'collision', handleCollision );
-  // goalkeeperContainer.addEventListener( 'ready', spawnBox );
-
-  goalkeeperContainer.position.set(THREE.Math.randInt(-10,10),THREE.Math.randFloat(2,9),2)
-  // goalkeeperContainer.setCcdMotionThreshold(.3)
-  goalkeeperContainer.__dirtyPosition = true
-  goalkeeperContainer.rotation.set(Math.PI*2, 0, 0)
-  goalkeeperContainer.__dirtyRotation = true
-  // goalkeeperContainer.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-  // goalkeeperContainer.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+    goalkeeperContainer.position.set(THREE.Math.randInt(-10,10),THREE.Math.randFloat(2,9),2)
+    // goalkeeperContainer.setCcdMotionThreshold(.3)
+    goalkeeperContainer.__dirtyPosition = true
+    goalkeeperContainer.rotation.set(Math.PI*2, 0, 0)
+    goalkeeperContainer.__dirtyRotation = true
+    // goalkeeperContainer.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+    // goalkeeperContainer.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+    ballzStart = false
+  }
 }
 function onMouseUp( event ) {
   
