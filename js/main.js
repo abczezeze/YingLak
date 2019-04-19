@@ -101,7 +101,7 @@ function init() {
     var animations = object.animations;
     goalkeeperModel = object.scene
     // console.log(goalkeeperModel);
-    goalkeeperModel.scale.set(5,5,5)
+    goalkeeperModel.scale.set(6,6,6)
     goalkeeperModel.position.y = -4
 
     goalkeeperModel.traverse((node) => {
@@ -221,7 +221,7 @@ function init() {
       new THREE.MeshBasicMaterial({visible: false, wireframe: true}),
       0
     );
-    doorCompoundTop.position.set(0,15,-5.5)
+    doorCompoundTop.position.set(0,14.5,-5.5)
 
     doorCompoundRingt = new Physijs.BoxMesh(
       new THREE.CubeGeometry( 2, 14, 12 ),
@@ -348,7 +348,6 @@ function init() {
         doorContianerTop.material.visible = !doorContianerTop.material.visible
         doorContianerRingt.material.visible = !doorContianerRingt.material.visible
         doorContianerLeft.material.visible = !doorContianerLeft.material.visible
-        
         doorCompoundTop.material.visible = !doorCompoundTop.material.visible
         doorCompoundLeft.material.visible = !doorCompoundLeft.material.visible
         doorCompoundRingt.material.visible = !doorCompoundRingt.material.visible
@@ -405,7 +404,6 @@ function init() {
         doorContianerTop.material.visible = value;
         doorContianerRingt.material.visible = value;
         doorContianerLeft.material.visible = value;
-        
         doorCompoundTop.material.visible = value;
         doorCompoundLeft.material.visible = value;
         doorCompoundRingt.material.visible = value;
@@ -435,6 +433,8 @@ function init() {
 
 
 function handleCollision( collided_with ) {
+  console.log(collided_with.name);
+  
   if(collided_with.name === 'goalkeeperContainer'){
     console.log("goalkeeperContainer",goalkeeperContainerCount++);
     soundGoalkeeper.play()
@@ -451,6 +451,13 @@ function handleCollision( collided_with ) {
     // ballz.name = ballzNum++
     // ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40));
     // scene.add(ballz)
+    // setTimeout(()=>{
+    //   goalkeeperContainer.position.set(THREE.Math.randInt(-10,10),THREE.Math.randFloat(2,9),2)
+    //   goalkeeperContainer.__dirtyPosition = true
+    //   goalkeeperContainer.rotation.set(Math.PI*2, 0, 0)
+    //   goalkeeperContainer.__dirtyRotation = true
+    //   ,3000
+    // })
   }
   if(collided_with.name === 'wallBack' || collided_with.name === 'EdgeDoor'){
     soundOhno.play()
@@ -496,7 +503,7 @@ function handleCollision( collided_with ) {
     goalkeeperActionBuzz.stop()
 
     // setTimeout(()=>{
-      // scene.remove(ballz)
+    // scene.remove(ballz)
     //   ,3000
     // })
     
@@ -533,7 +540,7 @@ function onTouchEnd( event ) {
 
 }
 function onMouseDown(event){
-  console.log("mouse down");
+  // console.log("mouse down");
   if(ballzStart){
     event.preventDefault()
     mouseCoords.x = (event.clientX/window.innerWidth)*2-1
