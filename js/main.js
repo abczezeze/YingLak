@@ -20,15 +20,7 @@ var loaderYeee, soundGoalYeee, listenerYeee = new THREE.AudioListener()
 var loaderOhno, soundOhno, listenerOhno = new THREE.AudioListener()
 //wall
 var wallBack, wallSpace
-// gui var
-var params = {
-  multiplyScalar: 180,
-  enabled: false,
-  wireframe: false, 
-  visible: false,
-  transparent: false,
-  sound: false
-  };
+
 //goal door class
 var GoalDoor = new GoalDoor();
 //loadingScreen
@@ -182,7 +174,7 @@ function init() {
     GoalDoor.mesh.position.z = 6
     doorContianer = new Physijs.BoxMesh(
       new THREE.CubeGeometry( 29, 29, 5 ),
-      new THREE.MeshBasicMaterial({color:0xff0000, visible: false, transparent:true, opacity:.5}),
+      new THREE.MeshBasicMaterial({color:0xff0000, visible:false, transparent:true, opacity:.5}),
       0
     );
     doorContianer.position.z = -7;
@@ -191,7 +183,7 @@ function init() {
 
     doorContianerTop = new Physijs.BoxMesh(
       new THREE.CubeGeometry( 30, 1, 10 ),
-      new THREE.MeshBasicMaterial({color:0xff0000, visible: false, transparent:true, opacity:.5}),
+      new THREE.MeshBasicMaterial({color:0xff0000, visible:false, transparent:true, opacity:.5}),
       0
     );
     doorContianerTop.position.set(0,13,0)
@@ -199,7 +191,7 @@ function init() {
 
     doorContianerRingt = new Physijs.BoxMesh(
       new THREE.CubeGeometry( 2, 14, 10 ),
-      new THREE.MeshBasicMaterial({color:0xff0000, visible: false, transparent:true, opacity:.5}),
+      new THREE.MeshBasicMaterial({color:0xff0000, visible:false, transparent:true, opacity:.5}),
       0
     );
     doorContianerRingt.position.set(14,5,0)
@@ -207,7 +199,7 @@ function init() {
         
     doorContianerLeft = new Physijs.BoxMesh(
       new THREE.CubeGeometry( 2, 14, 10 ),
-      new THREE.MeshBasicMaterial({color:0xff0000, visible: false, transparent:true, opacity:.5}),
+      new THREE.MeshBasicMaterial({color:0xff0000, visible:false, transparent:true, opacity:.5}),
       0
     );
     doorContianerLeft.position.set(-14,5,0)
@@ -218,14 +210,14 @@ function init() {
     //edge door
     doorCompoundTop = new Physijs.BoxMesh(
       new THREE.CubeGeometry( 30, 1, 12 ),
-      new THREE.MeshBasicMaterial({visible: false, wireframe: true}),
+      new THREE.MeshBasicMaterial({visible:false, wireframe:true}),
       0
     );
     doorCompoundTop.position.set(0,14.5,-5.5)
 
     doorCompoundRingt = new Physijs.BoxMesh(
       new THREE.CubeGeometry( 2, 14, 12 ),
-      new THREE.MeshBasicMaterial({visible: false, wireframe: true}),
+      new THREE.MeshBasicMaterial({visible:false, wireframe:true}),
       0
     );
     doorCompoundRingt.position.set(15.5,-7,-1)
@@ -233,7 +225,7 @@ function init() {
         
     doorCompoundLeft = new Physijs.BoxMesh(
       new THREE.CubeGeometry( 2, 14, 12 ),
-      new THREE.MeshBasicMaterial({visible: false, wireframe: true}),
+      new THREE.MeshBasicMaterial({visible:false, wireframe:true}),
       0
     );
     doorCompoundLeft.position.set(-15.5,-7,-1)
@@ -342,7 +334,7 @@ function init() {
   window.addEventListener('resize',onWindowResize,false)
   window.addEventListener( 'keydown', ( event ) => {
     switch ( event.keyCode ) {
-      case 90: //z
+      case 90: //Z
         goalkeeperContainer.material.visible = !goalkeeperContainer.material.visible
         doorContianer.material.visible = !doorContianer.material.visible
         doorContianerTop.material.visible = !doorContianerTop.material.visible
@@ -356,8 +348,20 @@ function init() {
         wallSpaceR.material.visible = !wallSpaceR.material.visible
         wallSpaceT.material.visible = !wallSpaceT.material.visible
       break;
-      case 88://x
+      case 88://X
         controls.enabled = !controls.enabled
+      break
+      case 82://R
+        ballzStart = true
+        scene.remove(ballz)
+      
+        ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
+        ballz.receiveShadow = true;
+        ballz.castShadow = true
+        ballz.name = ballzNum++
+        ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,35));
+        scene.add(ballz)
+            
     }
   });
   console.log("Press Z: Visible collision box\nPress X: Control camera");
@@ -383,6 +387,28 @@ function init() {
     goalDoorHtml.innerHTML = 'GoalDoor: 0'
     goalDoorHtml.style.textShadow = '0 0 4px #000'
     document.body.appendChild(goalDoorHtml);
+
+    // gui var
+    var params = {
+      multiplyScalar: 180,
+      enabled: false,
+      wireframe: false, 
+      visible: false,
+      transparent: false,
+      sound: false,
+      reset: ()=>{
+        ballzStart = true
+        scene.remove(ballz)
+      
+        ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
+        ballz.receiveShadow = true;
+        ballz.castShadow = true
+        ballz.name = ballzNum++
+        ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,35));
+        scene.add(ballz)
+        
+      }
+   };
   
   //GUI
     var gui = new dat.GUI();
@@ -427,6 +453,8 @@ function init() {
       g.add(params,'transparent').onChange(function(value){
         wallBack.material.transparent = value;
       });
+      g = gui.addFolder('Reset ballz');
+      g.add(params,'reset')
     gui.close()
   };
 }
