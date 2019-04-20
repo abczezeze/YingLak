@@ -237,20 +237,22 @@ function init() {
 
     //wall
     var wallTexture = new THREE.TextureLoader(loadingManager).load('Textures/Yinglak_bg.png')
-    wallTexture.wrapS = THREE.RepeatWrapping;
-    wallTexture.wrapT = THREE.RepeatWrapping;
-    wallTexture.repeat.set( 100, 40 );
+    // wallTexture.wrapS = THREE.RepeatWrapping;
+    // wallTexture.wrapT = THREE.RepeatWrapping;
+    // wallTexture.repeat.set( 100, 40 );
     // var walTexture_nm = new THREE.TextureLoader(loadingManager).load('Textures/Yinglak_bg_normal.png')
     // wallBack = new THREE.Mesh(new THREE.CubeGeometry( 350, 80, 2 ),
-    wallBack = new Physijs.BoxMesh(new THREE.CubeGeometry( 350, 80, 2 ),
-                                  // new THREE.MeshBasicMaterial({ color:0xb8265a, opacity:0.7, map:wallTexture, normalMap:walTexture_nm}))
-                                  new THREE.MeshBasicMaterial({ color:Math.random()*0xffffff, opacity:0.7, map:wallTexture}),0)
-                                  // new THREE.MeshBasicMaterial({ color:0x055334, transparent:true, opacity:0.4})
-    // console.log(wallBack.material);
-    wallBack.position.z = -42
-    wallBack.position.y = 30
-    wallBack.name = 'wallBack'
-    scene.add(wallBack)
+    for(let i=1;i<=10;i++){
+      wallBack = new Physijs.BoxMesh(new THREE.CubeGeometry( 400, 20*i, 15 ),
+                                    // new THREE.MeshBasicMaterial({ color:0xb8265a, opacity:0.7, map:wallTexture, normalMap:walTexture_nm}))
+                                    new THREE.MeshPhysicalMaterial({ color:0x440000, map:wallTexture}),0)
+                                    // new THREE.MeshBasicMaterial({ color:0x055334, transparent:true, opacity:0.4})
+      // console.log(wallBack.material);
+      wallBack.position.z = -42 - i*15
+      wallBack.position.y = 5
+      wallBack.name = 'wallBack'
+      scene.add(wallBack)
+    }
 
     wallSpace = new Physijs.BoxMesh(new THREE.CubeGeometry( 100, 80, 2 ),
                 new THREE.MeshBasicMaterial({ color:0x00ffff, wireframe:true, visible:false}),0)
@@ -286,7 +288,7 @@ function init() {
       floorMaterial.map.wrapS = floorMaterial.map.wrapT = floorMaterial.RepeatWrapping;
       floorMaterial.map.repeat.set( 30,30 );
     floor = new Physijs.BoxMesh(
-      new THREE.BoxGeometry( 500, 0.3, 500 ),
+      new THREE.BoxGeometry( 500, 2, 500 ),
       floorMaterial,
       0 //mass
     );
@@ -375,12 +377,14 @@ function init() {
     goalkeeperHtml.style.bottom = '60px'
     goalkeeperHtml.style.textAlign = 'left'
     goalkeeperHtml.style.color = '#1aff3c'
+    goalkeeperHtml.style.fontSize = '30px'
     goalkeeperHtml.innerHTML = 'Goalkeeper: 0'
     goalkeeperHtml.style.textShadow = '0 0 2px #fff'
     document.body.appendChild(goalkeeperHtml);
     goalDoorHtml = document.createElement("div")
     goalDoorHtml.style.position = 'absolute'
-    goalDoorHtml.style.bottom = '80px'
+    goalDoorHtml.style.bottom = '100px'
+    goalDoorHtml.style.fontSize = '30px'
     goalDoorHtml.style.textAlign = 'left'
     goalDoorHtml.style.color = '#eaf02a'
     goalDoorHtml.innerHTML = 'GoalDoor: 0'
