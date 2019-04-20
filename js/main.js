@@ -1,7 +1,7 @@
 Physijs.scripts.worker = "./js/lib/physijs_worker.js";
 Physijs.scripts.ammo = "ammo.js";
 var camera, scene, dlight, renderer, effcutout
-var NumberMulti = 180
+var numPower = 180, powerBarNum = 100
 var clock = new THREE.Clock()
 var goalkeeperModel, goalkeeperContainer, goalkeeperMixer, goalkeeperAction, goalkeeperActionHaha, goalkeeperActionSad, goalkeeperActionBuzz
 //raycast
@@ -28,7 +28,7 @@ var loadingScreen = {
 	scene: new THREE.Scene(),
 	camera: new THREE.PerspectiveCamera(90, window.innerWidth/window.innerHeight, 0.1, 100),
   box: new THREE.Mesh( new THREE.TorusGeometry( 1.8,.2,16,32 ), new THREE.MeshPhongMaterial({ color:0x0000dd })),
-  box2: new THREE.Mesh( new THREE.TorusGeometry( 1.2,.2,16,32 ), new THREE.MeshPhongMaterial({ color:0x000044 })),
+  box2: new THREE.Mesh( new THREE.CircleGeometry( 1.7,32 ), new THREE.MeshPhongMaterial({ color:0x000044, wireframe:true })),
   directionalLight: new THREE.DirectionalLight( 0xffffff, 0.5 )
 };
 var loadingManager = null;
@@ -67,7 +67,7 @@ function init() {
       //console.log(item, loaded, total);
       perload = loaded/total*100
       foo = document.getElementById('foo');
-      foo.innerHTML = "Loading: "+perload.toFixed(2)+"%<br>Total: "+total;
+      foo.innerHTML = "Loading: "+perload.toFixed(2)+"%<br>Total: "+total+"<br>By...ABC3Dz";
       if(loaded == total) foo.remove();
       // console.log('Loading file: '+item+'.\nLoaded: '+loaded+' of ' +total+' files.');
     };
@@ -354,18 +354,17 @@ function init() {
       case 82://R
         ballzStart = true
         scene.remove(ballz)
-      
         ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
         ballz.receiveShadow = true;
         ballz.castShadow = true
         ballz.name = ballzNum++
         ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,35));
         scene.add(ballz)
-            
     }
   });
-  console.log("Press Z: Visible collision box\nPress X: Control camera");
-  
+  console.log("Press Z: Visible collision box");
+  console.log("Press X: Control camera");
+  console.log("Press R: Reset ballz");  
 
   loadingManager.onLoad = function(){
     // console.log("loaded all resources");
@@ -377,7 +376,7 @@ function init() {
     goalkeeperHtml.style.textAlign = 'left'
     goalkeeperHtml.style.color = '#1aff3c'
     goalkeeperHtml.innerHTML = 'Goalkeeper: 0'
-    goalkeeperHtml.style.textShadow = '0 0 4px #000'
+    goalkeeperHtml.style.textShadow = '0 0 2px #fff'
     document.body.appendChild(goalkeeperHtml);
     goalDoorHtml = document.createElement("div")
     goalDoorHtml.style.position = 'absolute'
@@ -385,12 +384,33 @@ function init() {
     goalDoorHtml.style.textAlign = 'left'
     goalDoorHtml.style.color = '#eaf02a'
     goalDoorHtml.innerHTML = 'GoalDoor: 0'
-    goalDoorHtml.style.textShadow = '0 0 4px #000'
+    goalDoorHtml.style.textShadow = '0 0 2px #fff'
     document.body.appendChild(goalDoorHtml);
+    //power bar
+    let grad1 = document.createElement("div");
+    grad1.style.position = 'absolute'
+    grad1.style.bottom = '200px'
+    grad1.style.width = '20px'
+    grad1.style.height = '200px'
+    grad1.style.border = '4px solid gray'
+    grad1.style.transform = 'rotate(180deg)'
+    powerBar = document.createElement("div");
+    powerBar.style.width = "20px";
+    powerBar.style.background = "#101010";
+    powerBar.style.height = powerBarNum+"px";
+    grad1.appendChild(powerBar);
+    document.body.appendChild(grad1)
+    powerText = document.createElement("div");
+    powerText.style.position = 'absolute'
+    powerText.style.bottom = '180px'
+    powerText.style.color = '#101010'
+    powerText.innerHTML = 'Power'
+    powerText.style.textShadow = '0 0 2px #222222'
+    document.body.appendChild(powerText);
 
     // gui var
     var params = {
-      multiplyScalar: 180,
+      power: 180,
       enabled: false,
       wireframe: false, 
       visible: false,
@@ -399,26 +419,23 @@ function init() {
       reset: ()=>{
         ballzStart = true
         scene.remove(ballz)
-      
         ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
         ballz.receiveShadow = true;
         ballz.castShadow = true
         ballz.name = ballzNum++
         ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,35));
         scene.add(ballz)
-        
       }
    };
   
   //GUI
     var gui = new dat.GUI();
-    //console.log(gui);
     var g;
-    g = gui.addFolder('multiplyScalar');
-      g.add(params,'multiplyScalar',10,200).step(0.01).onChange(function(value){
-        NumberMulti = value
-        pos.multiplyScalar( value );
-      });
+    // console.log(gui);
+    // g = gui.addFolder('shoot power');
+    //   g.add(params,'power',10,200).step(0.01).onChange(function(value){
+    //     numPower = value
+    //   });
     g = gui.addFolder('Controls');
       g.add(params,'enabled').onChange(function(value){
         controls.enabled = value;
@@ -438,7 +455,7 @@ function init() {
         wallSpaceR.material.visible = value;
         wallSpaceT.material.visible = value;
       });
-      g = gui.addFolder('Soune');
+      g = gui.addFolder('Sound');
       g.add(params,'sound').onChange(function(value){
         if (value){
           soundYinglak.play() 
@@ -456,6 +473,7 @@ function init() {
       g = gui.addFolder('Reset ballz');
       g.add(params,'reset')
     gui.close()
+    gui.width = 200
   };
 }
 
@@ -471,21 +489,6 @@ function handleCollision( collided_with ) {
     goalkeeperActionSad.stop()
     goalkeeperActionBuzz.play()
       
-    // scene.remove(ballz)
-  
-    // ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
-    // ballz.receiveShadow = true;
-    // ballz.castShadow = true
-    // ballz.name = ballzNum++
-    // ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40));
-    // scene.add(ballz)
-    // setTimeout(()=>{
-    //   goalkeeperContainer.position.set(THREE.Math.randInt(-10,10),THREE.Math.randFloat(2,9),2)
-    //   goalkeeperContainer.__dirtyPosition = true
-    //   goalkeeperContainer.rotation.set(Math.PI*2, 0, 0)
-    //   goalkeeperContainer.__dirtyRotation = true
-    //   ,3000
-    // })
   }
   if(collided_with.name === 'wallBack' || collided_with.name === 'EdgeDoor'){
     soundOhno.play()
@@ -494,22 +497,9 @@ function handleCollision( collided_with ) {
     goalkeeperActionSad.stop()
     goalkeeperActionBuzz.stop()
 
-    // scene.remove(ballz)
-  
-    // ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
-    // ballz.receiveShadow = true;
-    // ballz.castShadow = true
-    // ballz.name = ballzNum++
-    // ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40));
-    // scene.add(ballz)
   }
   
     if(collided_with.name === 'floor' || collided_with.name === 'wallBack' || collided_with.name === 'wallSpace'){
-    //   goalkeeperAction.play()
-    //   goalkeeperActionHaha.stop()
-    //   goalkeeperActionSad.stop()
-    //   goalkeeperActionBuzz.stop()
-    
     ballzStart = true
     scene.remove(ballz)
   
@@ -534,13 +524,7 @@ function handleCollision( collided_with ) {
     // scene.remove(ballz)
     //   ,3000
     // })
-    
-    // ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
-    // ballz.receiveShadow = true;
-    // ballz.castShadow = true
-    // ballz.name = ballzNum++
-    // ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,40));
-    // scene.add(ballz)
+
     }  
   }
 
@@ -577,10 +561,14 @@ function onMouseDown(event){
     raycaster.setFromCamera(mouseCoords,camera)
     // var intersects = raycaster.intersectObjects(scene.children)
     // Intersects = raycaster.intersectObjects(networkObject)
+
+    numPower = powerBarNum
+    console.log(powerBarNum);
+    
     ballz.position.copy(raycaster.ray.direction);
     ballz.position.add(raycaster.ray.origin);
     pos.copy( raycaster.ray.direction );
-    pos.multiplyScalar( NumberMulti );
+    pos.multiplyScalar( numPower );
     ballz.setLinearVelocity( new THREE.Vector3( pos.x, pos.y, pos.z ) );
     soundKickball.play()
     ballz.addEventListener( 'collision', handleCollision );
@@ -611,10 +599,10 @@ function animate(){
   // if( RESOURCES_LOADED == true ){
     requestAnimationFrame(animate);
     // loadingScreen.box.position.x -= 0.05;
-    loadingScreen.box.rotation.x -= 0.01;
-    loadingScreen.box.rotation.y -= 0.01;
-    loadingScreen.box2.rotation.x += 0.01;
-    loadingScreen.box2.rotation.y += 0.01;
+    loadingScreen.box.rotation.z -= 0.01;
+    // loadingScreen.box.rotation.y -= 0.01;
+    loadingScreen.box2.rotation.z += 0.01;
+    // loadingScreen.box2.rotation.y += 0.01;
     // effcutout.render(loadingScreen.scene, loadingScreen.camera);
     renderer.render(loadingScreen.scene, loadingScreen.camera);
     return; // Stop the function here.
@@ -639,5 +627,12 @@ function render(){
   renderer.render(scene, camera)
   goalkeeperHtml.innerHTML = 'Goalkeeper: '+goalkeeperContainerCount
   goalDoorHtml.innerHTML = 'GoalDoor: '+doorContianerCount
+  powerBarNum+=Math.random()*7
+  if(powerBarNum>=200){
+    powerBarNum = 0
+    powerBar.style.height = powerBarNum+"px";
+  }else{
+    powerBar.style.height = powerBarNum+"px";
+  }
 
 }
