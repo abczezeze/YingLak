@@ -19,7 +19,7 @@ var loaderGoalkeeper, soundGoalkeeper, listenerGoalkeeper = new THREE.AudioListe
 var loaderYeee, soundGoalYeee, listenerYeee = new THREE.AudioListener()
 var loaderOhno, soundOhno, listenerOhno = new THREE.AudioListener()
 //wall
-var wallBack, wallSpace
+var wallBack, wallSpace, wallSpaceBT
 
 //goal door class
 var GoalDoor = new GoalDoor();
@@ -77,7 +77,7 @@ function init() {
   dlight = new THREE.DirectionalLight( 0xffffff, 1 )
   dlight.position.set( -10, 10, 15 )
   dlight.castShadow = true
-  let dl = 100
+  let dl = 300
   dlight.shadow.camera.left = -dl
   dlight.shadow.camera.right = dl
   dlight.shadow.camera.top = dl
@@ -137,7 +137,7 @@ function init() {
     ballzTexture = new THREE.TextureLoader(loadingManager).load('Textures/ballTexture.png')
     ballzTexture_nm = new THREE.TextureLoader(loadingManager).load('Textures/ballTexture_normal.png')
     ballzMaterial = Physijs.createMaterial(new THREE.MeshPhongMaterial({ color:0xffffff, map:ballzTexture, normalMap:ballzTexture_nm}))
-    ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
+    ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 200 )
     ballz.name = ballzNum
     ballz.receiveShadow = true
     ballz.castShadow = true
@@ -250,10 +250,55 @@ function init() {
       // console.log(wallBack.material);
       wallBack.position.z = -42 - i*15
       wallBack.position.y = 5
+      wallBack.receiveShadow = true
+      wallBack.castShadow = true
       wallBack.name = 'wallBack'
       scene.add(wallBack)
     }
+      //audienc
+      for(let i=1;i<=15;i++){         
+        audiencCylinderYL1 = new Physijs.CylinderMesh(
+          new THREE.CylinderGeometry( 3, 5, 16, 16 ),
+          new THREE.MeshStandardMaterial({ color:Math.random()*0xffffff}),
+          1000
+        );
+        audiencCylinderYL1.position.set(i*15-120,33 ,-71 )
+        audiencCylinderYL1.receiveShadow = true
+        audiencCylinderYL1.castShadow = true
+        scene.add(audiencCylinderYL1)
+      
+        audiencCylinderYL2 = new Physijs.CylinderMesh(
+          new THREE.CylinderGeometry( 5, 3, 16, 16 ),
+          new THREE.MeshStandardMaterial({ color:Math.random()*0xffffff}),
+          1000
+        );
+        audiencCylinderYL2.position.set(i*15-110,45 ,-83 )
+        audiencCylinderYL2.receiveShadow = true
+        audiencCylinderYL2.castShadow = true
+        scene.add(audiencCylinderYL2)
 
+        audiencCylinderYL3 = new Physijs.CylinderMesh(
+          new THREE.CylinderGeometry( 3, 5, 16, 16 ),
+          new THREE.MeshStandardMaterial({ color:Math.random()*0xffffff}),
+          1000
+        );
+        audiencCylinderYL3.position.set(i*15-120,56 ,-100 )
+        audiencCylinderYL3.receiveShadow = true
+        audiencCylinderYL3.castShadow = true
+        scene.add(audiencCylinderYL3)
+
+        audiencCylinderYL4 = new Physijs.CylinderMesh(
+          new THREE.CylinderGeometry( 5, 3, 16, 16 ),
+          new THREE.MeshStandardMaterial({ color:Math.random()*0xffffff}),
+          1000
+        );
+        audiencCylinderYL4.position.set(i*15-110,67 ,-112 )
+        audiencCylinderYL4.receiveShadow = true
+        audiencCylinderYL4.castShadow = true
+        scene.add(audiencCylinderYL4)
+      }
+
+    //wall space
     wallSpace = new Physijs.BoxMesh(new THREE.CubeGeometry( 100, 80, 2 ),
                 new THREE.MeshBasicMaterial({ color:0x00ffff, wireframe:true, visible:false}),0)
     wallSpace.position.set(0,10,45)
@@ -271,7 +316,21 @@ function init() {
     wallSpace.add(wallSpaceT)
     wallSpace.name = 'wallSpace'
     scene.add(wallSpace)
-    
+
+    //wallSpaceBT
+    wallSpaceBT = new Physijs.BoxMesh(new THREE.CubeGeometry( 400, 2, 170 ),
+                new THREE.MeshBasicMaterial({ color:0x00ffff, wireframe:true, visible:false}),0)
+    wallSpaceBT.position.set(0,80,-100)
+    wallSpaceBTL = new Physijs.BoxMesh(new THREE.CubeGeometry( 4, 172, 170 ),
+                new THREE.MeshBasicMaterial({ color:0x00ffff, wireframe:true, visible:false}),0)
+    wallSpaceBTL.position.set(120,0,20)
+    wallSpaceBT.add(wallSpaceBTL)
+    wallSpaceBTR = new Physijs.BoxMesh(new THREE.CubeGeometry( 4, 172, 170 ),
+                new THREE.MeshBasicMaterial({ color:0x00ffff, wireframe:true, visible:false}),0)
+    wallSpaceBTR.position.set(-120,0,20)
+    wallSpaceBT.add(wallSpaceBTR)
+    wallSpaceBT.name = 'wallSpace'
+    scene.add(wallSpaceBT)
 
 
     //groundphysic
@@ -288,12 +347,12 @@ function init() {
       floorMaterial.map.wrapS = floorMaterial.map.wrapT = floorMaterial.RepeatWrapping;
       floorMaterial.map.repeat.set( 30,30 );
     floor = new Physijs.BoxMesh(
-      new THREE.BoxGeometry( 500, 2, 500 ),
+      new THREE.BoxGeometry( 500, 80, 500 ),
       floorMaterial,
       0 //mass
     );
     floor.receiveShadow = true;
-    floor.position.set(0,0,0);
+    floor.position.set(0,-41,0);
     floor.name = 'floor'
     floor.add( listenerYinglak );
     soundYinglak = new THREE.Audio( listenerYinglak );
@@ -349,6 +408,9 @@ function init() {
         wallSpaceL.material.visible = !wallSpaceL.material.visible
         wallSpaceR.material.visible = !wallSpaceR.material.visible
         wallSpaceT.material.visible = !wallSpaceT.material.visible
+        wallSpaceBT.material.visible = !wallSpaceBT.material.visible
+        wallSpaceBTL.material.visible = !wallSpaceBTL.material.visible
+        wallSpaceBTR.material.visible = !wallSpaceBTR.material.visible
       break;
       case 88://X
         controls.enabled = !controls.enabled
@@ -362,6 +424,7 @@ function init() {
         ballz.name = ballzNum++
         ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,35));
         scene.add(ballz)
+      break
     }
   });
   console.log("Press Z: Visible collision box");
@@ -458,6 +521,9 @@ function init() {
         wallSpaceL.material.visible = value;
         wallSpaceR.material.visible = value;
         wallSpaceT.material.visible = value;
+        wallSpaceBT.material.visible = value;
+        wallSpaceBTL.material.visible = value;
+        wallSpaceBTR.material.visible = value;
       });
       g = gui.addFolder('Sound');
       g.add(params,'sound').onChange(function(value){
@@ -565,9 +631,13 @@ function onMouseDown(event){
     raycaster.setFromCamera(mouseCoords,camera)
     // var intersects = raycaster.intersectObjects(scene.children)
     // Intersects = raycaster.intersectObjects(networkObject)
-
-    numPower = powerBarNum
-    console.log(powerBarNum);
+    //bug PowerBarNum=0 
+    if(powerBarNum===0){
+      numPower = powerBarNum+1
+    }else{
+      numPower = powerBarNum
+    }
+    console.log('power',powerBarNum);
     
     ballz.position.copy(raycaster.ray.direction);
     ballz.position.add(raycaster.ray.origin);
