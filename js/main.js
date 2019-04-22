@@ -432,7 +432,7 @@ function init() {
         ballz.receiveShadow = true;
         ballz.castShadow = true
         ballz.name = ballzNum++
-        ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,35));
+        ballz.position.set(THREE.Math.randFloat(-10,10),1,THREE.Math.randFloat(30,35));
         scene.add(ballz)
       break
     }
@@ -512,7 +512,7 @@ function init() {
         ballz.receiveShadow = true;
         ballz.castShadow = true
         ballz.name = ballzNum++
-        ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,35));
+        ballz.position.set(THREE.Math.randFloat(-10,10),1,THREE.Math.randFloat(30,35));
         scene.add(ballz)
       }
    };
@@ -605,6 +605,10 @@ function handleCollision( collided_with ) {
     ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,35));
     scene.add(ballz)
     arrowHelper.position.set(ballz.position.x,0,ballz.position.z-1 )
+    goalkeeperContainer.position.set(THREE.Math.randInt(-10,10),THREE.Math.randFloat(2,9),2)
+    goalkeeperContainer.__dirtyPosition = true
+    goalkeeperContainer.rotation.set(Math.PI*2, 0, 0)
+    goalkeeperContainer.__dirtyRotation = true
     }
 
   if(collided_with.name === 'doorContianer'){
@@ -671,7 +675,6 @@ function onMouseDown(event){
     // goalkeeperContainer.addEventListener( 'ready', spawnBox );
 
     goalkeeperContainer.position.set(THREE.Math.randInt(-10,10),THREE.Math.randFloat(2,9),2)
-    // goalkeeperContainer.setCcdMotionThreshold(.3)
     goalkeeperContainer.__dirtyPosition = true
     goalkeeperContainer.rotation.set(Math.PI*2, 0, 0)
     goalkeeperContainer.__dirtyRotation = true
