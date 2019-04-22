@@ -7,6 +7,8 @@ var goalkeeperModel, goalkeeperContainer, goalkeeperMixer, goalkeeperAction, goa
 //raycast
 var mouseCoords = new THREE.Vector2()
 var raycaster = new THREE.Raycaster()
+//arrowHelper
+var arrowHelper
 //ball
 var ballz, ballzMaterial, ballzTexture, ballzTexture_nm
 var ballzNum = 1, ballzStart = true
@@ -20,7 +22,8 @@ var loaderYeee, soundGoalYeee, listenerYeee = new THREE.AudioListener()
 var loaderOhno, soundOhno, listenerOhno = new THREE.AudioListener()
 //wall
 var wallBack, wallSpace, wallSpaceBT
-
+//html
+var how2
 //goal door class
 var GoalDoor = new GoalDoor();
 //loadingScreen
@@ -72,7 +75,7 @@ function init() {
       // console.log('Loading file: '+item+'.\nLoaded: '+loaded+' of ' +total+' files.');
     };
 
-    
+
 
   dlight = new THREE.DirectionalLight( 0xffffff, 1 )
   dlight.position.set( -10, 10, 15 )
@@ -142,7 +145,7 @@ function init() {
     ballz.receiveShadow = true
     ballz.castShadow = true
     ballz.position.set(0,2,31)
- 
+
     ballz.add(listenerKickball)
     loaderKickball = new THREE.AudioLoader(loadingManager);
     soundKickball = new THREE.Audio( listenerKickball );
@@ -169,7 +172,16 @@ function init() {
     });
 
     scene.add( ballz )
-
+    //Arrow
+    var dir = new THREE.Vector3( 0,1,-5 );
+    //normalize the direction vector (convert to vector of length 1)
+    dir.normalize();
+    var origin = new THREE.Vector3(0,ballz.position.y-1,ballz.position.z);
+    var length = 5;
+    var hex = 0x550000;
+    arrowHelper = new THREE.ArrowHelper( dir, origin, length, hex );
+    scene.add( arrowHelper );
+    
     //doorContianer
     GoalDoor.mesh.position.z = 6
     doorContianer = new Physijs.BoxMesh(
@@ -196,7 +208,7 @@ function init() {
     );
     doorContianerRingt.position.set(14,5,0)
     doorContianer.add(doorContianerRingt)
-        
+
     doorContianerLeft = new Physijs.BoxMesh(
       new THREE.CubeGeometry( 2, 14, 10 ),
       new THREE.MeshBasicMaterial({color:0xff0000, visible:false, transparent:true, opacity:.5}),
@@ -204,7 +216,7 @@ function init() {
     );
     doorContianerLeft.position.set(-14,5,0)
     doorContianer.add(doorContianerLeft)
-    
+
     scene.add(doorContianer)
 
     //edge door
@@ -222,7 +234,7 @@ function init() {
     );
     doorCompoundRingt.position.set(15.5,-7,-1)
     doorCompoundTop.add(doorCompoundRingt)
-        
+
     doorCompoundLeft = new Physijs.BoxMesh(
       new THREE.CubeGeometry( 2, 14, 12 ),
       new THREE.MeshBasicMaterial({visible:false, wireframe:true}),
@@ -233,8 +245,6 @@ function init() {
     doorCompoundTop.name = 'EdgeDoor'
     scene.add(doorCompoundTop)
 
-    
-
     //wall
     var wallTexture = new THREE.TextureLoader(loadingManager).load('Textures/Yinglak_bg.png')
     // wallTexture.wrapS = THREE.RepeatWrapping;
@@ -244,9 +254,9 @@ function init() {
     // wallBack = new THREE.Mesh(new THREE.CubeGeometry( 350, 80, 2 ),
     for(let i=1;i<=10;i++){
       wallBack = new Physijs.BoxMesh(new THREE.CubeGeometry( 400, 20*i, 15 ),
-                                    // new THREE.MeshBasicMaterial({ color:0xb8265a, opacity:0.7, map:wallTexture, normalMap:walTexture_nm}))
-                                    new THREE.MeshPhysicalMaterial({ color:0x440000, map:wallTexture}),0)
-                                    // new THREE.MeshBasicMaterial({ color:0x055334, transparent:true, opacity:0.4})
+            // new THREE.MeshBasicMaterial({ color:0xb8265a, opacity:0.7, map:wallTexture, normalMap:walTexture_nm}))
+            new THREE.MeshPhysicalMaterial({ color:0x440000, map:wallTexture}),0)
+            // new THREE.MeshBasicMaterial({ color:0x055334, transparent:true, opacity:0.4})
       // console.log(wallBack.material);
       wallBack.position.z = -42 - i*15
       wallBack.position.y = 5
@@ -256,7 +266,7 @@ function init() {
       scene.add(wallBack)
     }
       //audienc
-      for(let i=1;i<=15;i++){         
+      for(let i=1;i<=15;i++){
         audiencCylinderYL1 = new Physijs.CylinderMesh(
           new THREE.CylinderGeometry( 3, 5, 16, 16 ),
           new THREE.MeshStandardMaterial({ color:Math.random()*0xffffff}),
@@ -266,7 +276,7 @@ function init() {
         audiencCylinderYL1.receiveShadow = true
         audiencCylinderYL1.castShadow = true
         scene.add(audiencCylinderYL1)
-      
+
         audiencCylinderYL2 = new Physijs.CylinderMesh(
           new THREE.CylinderGeometry( 5, 3, 16, 16 ),
           new THREE.MeshStandardMaterial({ color:Math.random()*0xffffff}),
@@ -332,7 +342,6 @@ function init() {
     wallSpaceBT.name = 'wallSpace'
     scene.add(wallSpaceBT)
 
-
     //groundphysic
     var grassTexture = new THREE.TextureLoader(loadingManager).load('Textures/GrassGreenTexture_brusheezy.jpg')
     // var grassTexture_nm = new THREE.TextureLoader(loadingManager).load('Textures/GrassGreenTexture_brusheezy_normal.jpg')
@@ -364,7 +373,7 @@ function init() {
       // soundYinglak.play();
     });
     // console.log(soundYinglak);
-    
+
     var soundsub = new THREE.Audio( listenerYinglak );
     loaderYinglak.load( 'Sound/YingLakSub.ogg', function( buffer ) {
       soundsub.setBuffer( buffer );
@@ -383,7 +392,7 @@ function init() {
   container.appendChild(renderer.domElement)
   controls = new THREE.OrbitControls(camera)
   controls.enabled = false
-  // effcutout = new THREE.OutlineEffect(renderer)  
+  // effcutout = new THREE.OutlineEffect(renderer)
 
   document.addEventListener( 'mousedown', onMouseDown, false );
   document.addEventListener( 'mouseup', onMouseUp, false);
@@ -391,6 +400,7 @@ function init() {
 
   document.addEventListener('touchstart',onTouchStart,false)
   document.addEventListener('touchend',onMouseUp,false)
+  document.addEventListener('touchmove',onTouchMove,false)
 
   window.addEventListener('resize',onWindowResize,false)
   window.addEventListener( 'keydown', ( event ) => {
@@ -429,7 +439,7 @@ function init() {
   });
   console.log("Press Z: Visible collision box");
   console.log("Press X: Control camera");
-  console.log("Press R: Reset ballz");  
+  console.log("Press R: Reset ballz");
 
   loadingManager.onLoad = function(){
     // console.log("loaded all resources");
@@ -474,12 +484,24 @@ function init() {
     powerText.innerHTML = 'Power'
     powerText.style.textShadow = '0 0 2px #222222'
     document.body.appendChild(powerText);
+    //how2
+    how2 = document.createElement("div")
+    how2.style.position = 'absolute'
+    how2.style.bottom = '150px'
+    how2.style.width = '100%'
+    how2.style.fontSize = '30px'
+    how2.style.textAlign = 'center'
+    how2.style.color = '#5566af'
+    how2.innerHTML = 'Click or Touch<br>eveywhere for shooting'
+    how2.style.textShadow = '0 0 2px #fff'
+    document.body.appendChild(how2);
+    
 
     // gui var
     var params = {
       power: 180,
       enabled: false,
-      wireframe: false, 
+      wireframe: false,
       visible: false,
       transparent: false,
       sound: false,
@@ -494,7 +516,7 @@ function init() {
         scene.add(ballz)
       }
    };
-  
+
   //GUI
     var gui = new dat.GUI();
     var g;
@@ -528,7 +550,7 @@ function init() {
       g = gui.addFolder('Sound');
       g.add(params,'sound').onChange(function(value){
         if (value){
-          soundYinglak.play() 
+          soundYinglak.play()
           soundsub.play();
         }
         else {
@@ -545,12 +567,15 @@ function init() {
     gui.close()
     gui.width = 200
   };
+  setTimeout(()=>{
+    how2.remove()
+  },4000)
 }
 
 
 function handleCollision( collided_with ) {
   console.log(collided_with.name);
-  
+
   if(collided_with.name === 'goalkeeperContainer'){
     console.log("goalkeeperContainer",goalkeeperContainerCount++);
     soundGoalkeeper.play()
@@ -558,7 +583,7 @@ function handleCollision( collided_with ) {
     goalkeeperActionHaha.stop()
     goalkeeperActionSad.stop()
     goalkeeperActionBuzz.play()
-      
+
   }
   if(collided_with.name === 'wallBack' || collided_with.name === 'EdgeDoor'){
     soundOhno.play()
@@ -568,20 +593,20 @@ function handleCollision( collided_with ) {
     goalkeeperActionBuzz.stop()
 
   }
-  
+
     if(collided_with.name === 'floor' || collided_with.name === 'wallBack' || collided_with.name === 'wallSpace'){
     ballzStart = true
     scene.remove(ballz)
-  
+
     ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
     ballz.receiveShadow = true;
     ballz.castShadow = true
     ballz.name = ballzNum++
     ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,35));
     scene.add(ballz)
-
+    arrowHelper.position.set(ballz.position.x,0,ballz.position.z-1 )
     }
-    
+
   if(collided_with.name === 'doorContianer'){
     console.log('doorContianer',doorContianerCount++);
     soundGoalYeee.play()
@@ -590,12 +615,7 @@ function handleCollision( collided_with ) {
     goalkeeperActionHaha.stop()
     goalkeeperActionBuzz.stop()
 
-    // setTimeout(()=>{
-    // scene.remove(ballz)
-    //   ,3000
-    // })
-
-    }  
+    }
   }
 
 function onWindowResize() {
@@ -631,14 +651,14 @@ function onMouseDown(event){
     raycaster.setFromCamera(mouseCoords,camera)
     // var intersects = raycaster.intersectObjects(scene.children)
     // Intersects = raycaster.intersectObjects(networkObject)
-    //bug PowerBarNum=0 
+    //bug PowerBarNum=0
     if(powerBarNum===0){
       numPower = powerBarNum+1
     }else{
       numPower = powerBarNum
     }
     console.log('power',powerBarNum);
-    
+
     ballz.position.copy(raycaster.ray.direction);
     ballz.position.add(raycaster.ray.origin);
     pos.copy( raycaster.ray.direction );
@@ -646,6 +666,8 @@ function onMouseDown(event){
     ballz.setLinearVelocity( new THREE.Vector3( pos.x, pos.y, pos.z ) );
     soundKickball.play()
     ballz.addEventListener( 'collision', handleCollision );
+
+    
     // goalkeeperContainer.addEventListener( 'ready', spawnBox );
 
     goalkeeperContainer.position.set(THREE.Math.randInt(-10,10),THREE.Math.randFloat(2,9),2)
@@ -662,8 +684,21 @@ function onMouseUp( event ) {
   
 }
 function onMouseMove( event ) {
-  // console.log(event.clientX,event.clientY);
+  event.preventDefault();
+	mouseCoords.x = (event.clientX / window.innerWidth) * 2 - 1;
+	mouseCoords.y = - (event.clientY / window.innerHeight) * 2 + 1;
   
+  var vector = new THREE.Vector3(mouseCoords.x, mouseCoords.y/2, -mouseCoords.y);
+  arrowHelper.setDirection(vector)
+ 
+  console.log(arrowHelper);
+  
+}
+function onTouchMove( event ) {
+  event.preventDefault();
+  event.clientX = event.touches[0].clientX;
+  event.clientY = event.touches[0].clientY;
+  onDocumentMouseMove( event );
 }
 
 
@@ -694,9 +729,9 @@ function render(){
   // goalkeeperContainer.__dirtyPosition = true;
   goalkeeperContainer.setLinearVelocity(new THREE.Vector3(0, -5, 0));
   // goalkeeperContainer.setAngularVelocity(new THREE.Vector3(2, 3, 5));
-  
+
   scene.simulate(); // run physics
-  
+
   // effcutout.render(scene, camera)
   renderer.render(scene, camera)
   goalkeeperHtml.innerHTML = 'Goalkeeper: '+goalkeeperContainerCount
