@@ -266,47 +266,47 @@ function init() {
       scene.add(wallBack)
     }
       //audienc
-      for(let i=1;i<=15;i++){
-        audiencCylinderYL1 = new Physijs.CylinderMesh(
-          new THREE.CylinderGeometry( 3, 5, 16, 16 ),
-          new THREE.MeshStandardMaterial({ color:Math.random()*0xffffff}),
-          1000
-        );
-        audiencCylinderYL1.position.set(i*15-120,33 ,-71 )
-        audiencCylinderYL1.receiveShadow = true
-        audiencCylinderYL1.castShadow = true
-        scene.add(audiencCylinderYL1)
+      // for(let i=1;i<=15;i++){
+      //   audiencCylinderYL1 = new Physijs.CylinderMesh(
+      //     new THREE.CylinderGeometry( 3, 5, 16, 16 ),
+      //     new THREE.MeshStandardMaterial({ color:Math.random()*0xffffff}),
+      //     1000
+      //   );
+      //   audiencCylinderYL1.position.set(i*15-120,33 ,-71 )
+      //   audiencCylinderYL1.receiveShadow = true
+      //   audiencCylinderYL1.castShadow = true
+      //   scene.add(audiencCylinderYL1)
 
-        audiencCylinderYL2 = new Physijs.CylinderMesh(
-          new THREE.CylinderGeometry( 5, 3, 16, 16 ),
-          new THREE.MeshStandardMaterial({ color:Math.random()*0xffffff}),
-          1000
-        );
-        audiencCylinderYL2.position.set(i*15-110,45 ,-83 )
-        audiencCylinderYL2.receiveShadow = true
-        audiencCylinderYL2.castShadow = true
-        scene.add(audiencCylinderYL2)
+      //   audiencCylinderYL2 = new Physijs.CylinderMesh(
+      //     new THREE.CylinderGeometry( 5, 3, 16, 16 ),
+      //     new THREE.MeshStandardMaterial({ color:Math.random()*0xffffff}),
+      //     1000
+      //   );
+      //   audiencCylinderYL2.position.set(i*15-110,45 ,-83 )
+      //   audiencCylinderYL2.receiveShadow = true
+      //   audiencCylinderYL2.castShadow = true
+      //   scene.add(audiencCylinderYL2)
 
-        audiencCylinderYL3 = new Physijs.CylinderMesh(
-          new THREE.CylinderGeometry( 3, 5, 16, 16 ),
-          new THREE.MeshStandardMaterial({ color:Math.random()*0xffffff}),
-          1000
-        );
-        audiencCylinderYL3.position.set(i*15-120,56 ,-100 )
-        audiencCylinderYL3.receiveShadow = true
-        audiencCylinderYL3.castShadow = true
-        scene.add(audiencCylinderYL3)
+      //   audiencCylinderYL3 = new Physijs.CylinderMesh(
+      //     new THREE.CylinderGeometry( 3, 5, 16, 16 ),
+      //     new THREE.MeshStandardMaterial({ color:Math.random()*0xffffff}),
+      //     1000
+      //   );
+      //   audiencCylinderYL3.position.set(i*15-120,56 ,-100 )
+      //   audiencCylinderYL3.receiveShadow = true
+      //   audiencCylinderYL3.castShadow = true
+      //   scene.add(audiencCylinderYL3)
 
-        audiencCylinderYL4 = new Physijs.CylinderMesh(
-          new THREE.CylinderGeometry( 5, 3, 16, 16 ),
-          new THREE.MeshStandardMaterial({ color:Math.random()*0xffffff}),
-          1000
-        );
-        audiencCylinderYL4.position.set(i*15-110,67 ,-112 )
-        audiencCylinderYL4.receiveShadow = true
-        audiencCylinderYL4.castShadow = true
-        scene.add(audiencCylinderYL4)
-      }
+      //   audiencCylinderYL4 = new Physijs.CylinderMesh(
+      //     new THREE.CylinderGeometry( 5, 3, 16, 16 ),
+      //     new THREE.MeshStandardMaterial({ color:Math.random()*0xffffff}),
+      //     1000
+      //   );
+      //   audiencCylinderYL4.position.set(i*15-110,67 ,-112 )
+      //   audiencCylinderYL4.receiveShadow = true
+      //   audiencCylinderYL4.castShadow = true
+      //   scene.add(audiencCylinderYL4)
+      // }
 
     //wall space
     wallSpace = new Physijs.BoxMesh(new THREE.CubeGeometry( 100, 80, 2 ),
