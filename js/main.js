@@ -144,7 +144,7 @@ function init() {
     ballz.name = ballzNum
     ballz.receiveShadow = true
     ballz.castShadow = true
-    ballz.position.set(0,2,31)
+    ballz.position.set(0,2,61)
 
     ballz.add(listenerKickball)
     loaderKickball = new THREE.AudioLoader(loadingManager);
@@ -311,7 +311,7 @@ function init() {
     //wall space
     wallSpace = new Physijs.BoxMesh(new THREE.CubeGeometry( 100, 80, 2 ),
                 new THREE.MeshBasicMaterial({ color:0x00ffff, wireframe:true, visible:false}),0)
-    wallSpace.position.set(0,10,45)
+    wallSpace.position.set(0,10,75)
     wallSpaceL = new Physijs.BoxMesh(new THREE.CubeGeometry( 2, 80, 100 ),
                 new THREE.MeshBasicMaterial({ color:0x00ffff, wireframe:true, visible:false}),0)
     wallSpaceL.position.set(42,0,-35)
@@ -432,7 +432,7 @@ function init() {
         ballz.receiveShadow = true;
         ballz.castShadow = true
         ballz.name = ballzNum++
-        ballz.position.set(THREE.Math.randFloat(-10,10),1,THREE.Math.randFloat(30,35));
+        ballz.position.set(THREE.Math.randFloat(-15,15),1,THREE.Math.randFloat(40,65));
         scene.add(ballz)
       break
     }
@@ -512,7 +512,7 @@ function init() {
         ballz.receiveShadow = true;
         ballz.castShadow = true
         ballz.name = ballzNum++
-        ballz.position.set(THREE.Math.randFloat(-10,10),1,THREE.Math.randFloat(30,35));
+        ballz.position.set(THREE.Math.randFloat(-15,15),1,THREE.Math.randFloat(40,65));
         scene.add(ballz)
       }
    };
@@ -602,7 +602,7 @@ function handleCollision( collided_with ) {
     ballz.receiveShadow = true;
     ballz.castShadow = true
     ballz.name = ballzNum++
-    ballz.position.set(THREE.Math.randFloat(-10,10),2,THREE.Math.randFloat(30,35));
+    ballz.position.set(THREE.Math.randFloat(-15,15),1,THREE.Math.randFloat(40,65));
     scene.add(ballz)
     arrowHelper.position.set(ballz.position.x,0,ballz.position.z-1 )
     goalkeeperContainer.position.set(THREE.Math.randInt(-10,10),THREE.Math.randFloat(2,9),2)
@@ -728,6 +728,9 @@ function render(){
   var delta = clock.getDelta();
   goalkeeperMixer.update(delta);
 
+  if(camera.position.z<=80)camera.position.z+=1
+  console.log(camera.position.z);
+  
   // goalkeeperContainer.position.x = 10;
   // goalkeeperContainer.__dirtyPosition = true;
   goalkeeperContainer.setLinearVelocity(new THREE.Vector3(0, -5, 0));
