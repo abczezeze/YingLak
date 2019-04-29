@@ -9,6 +9,8 @@ var mouseCoords = new THREE.Vector2()
 var raycaster = new THREE.Raycaster()
 //arrowHelper
 var arrowHelper
+//sound
+var soundPlay = true;
 //ball
 var ballz, ballzMaterial, ballzTexture, ballzTexture_nm
 var ballzNum = 1, ballzStart = true
@@ -378,8 +380,8 @@ function init() {
     loaderYinglak.load( 'Sound/YingLakSub.ogg', function( buffer ) {
       soundsub.setBuffer( buffer );
       soundsub.setLoop( true );
-      soundsub.setVolume( 0.5 );
-      // soundsub.play();
+      soundsub.setVolume( 0.3 );
+      soundsub.play();
     });
     scene.add( floor );
 
@@ -424,7 +426,7 @@ function init() {
       break;
       case 88://X
         controls.enabled = !controls.enabled
-      break
+      break;
       case 82://R
         ballzStart = true
         scene.remove(ballz)
@@ -434,7 +436,19 @@ function init() {
         ballz.name = ballzNum++
         ballz.position.set(THREE.Math.randFloat(-15,15),1,THREE.Math.randFloat(40,65));
         scene.add(ballz)
-      break
+      break;
+      case 67://C        
+        soundPlay = !soundPlay
+        console.log('soundPlay',soundPlay);
+        // soundYinglak.isPlaying =!soundYinglak.isPlaying
+        // console.log('isPlaying',soundYinglak.isPlaying);
+        // console.log(soundYinglak);
+        if(soundPlay)
+          soundYinglak.stop()
+        else
+          soundYinglak.play()
+      break;
+
     }
   });
   console.log("Press Z: Visible collision box");
@@ -551,11 +565,9 @@ function init() {
       g.add(params,'sound').onChange(function(value){
         if (value){
           soundYinglak.play()
-          soundsub.play();
         }
         else {
           soundYinglak.pause()
-          soundsub.play();
         }
       });
       g = gui.addFolder('Wall');
@@ -706,12 +718,15 @@ function onTouchMove( event ) {
 
 
 function animate(){
-    // This block runs while resources are loading.
+    // This block runs while resources are loading.      
   if( RESOURCES_LOADED == false ){
   // if( RESOURCES_LOADED == true ){
     requestAnimationFrame(animate);
     // loadingScreen.box.position.x -= 0.05;
     loadingScreen.box.rotation.z -= 0.01;
+    // loadingScreen.box.material.color.setHex( 0xaa0000*i );
+    // loadingScreen.box.material.color = new THREE.Color( Math.random()*0x0000cc );
+    loadingScreen.box.material.color.b += .1
     // loadingScreen.box.rotation.y -= 0.01;
     loadingScreen.box2.rotation.z += 0.01;
     // loadingScreen.box2.rotation.y += 0.01;
