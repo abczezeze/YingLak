@@ -685,13 +685,6 @@ function onMouseDown(event){
     // console.log(Intersects);
     
     if(Intersects.length>0){
-      // console.log('x',mouseCoords.x);
-      // console.log('y',mouseCoords.y);
-      // console.log('winX',window.innerWidth);
-      // console.log('winY',window.innerHeight);
-      // console.log(gui);
-      if(mouseCoords.x>.4||mouseCoords.y>.7)return
-
       ballz.position.copy(raycaster.ray.direction);
       ballz.position.add(raycaster.ray.origin);
       pos.copy( raycaster.ray.direction );
@@ -729,7 +722,7 @@ function onTouchMove( event ) {
   event.preventDefault();
   event.clientX = event.touches[0].clientX;
   event.clientY = event.touches[0].clientY;
-  onDocumentMouseMove( event );
+  onMouseMove( event );
 }
 
 
