@@ -487,6 +487,15 @@ function init() {
     goalDoorHtml.innerHTML = 'GoalDoor: 0'
     goalDoorHtml.style.textShadow = '0 0 2px #fff'
     document.body.appendChild(goalDoorHtml);
+    ballStatus = document.createElement("div")
+    ballStatus.style.position = 'absolute'
+    ballStatus.style.bottom = '30px'
+    ballStatus.style.fontSize = '25px'
+    ballStatus.style.textAlign = 'left'
+    ballStatus.style.color = '#e80e28'
+    ballStatus.innerHTML = 'Touch'
+    ballStatus.style.textShadow = '0 0 2px #fff'
+    document.body.appendChild(ballStatus);
     //power bar
     let grad1 = document.createElement("div");
     grad1.style.position = 'absolute'
@@ -523,11 +532,10 @@ function init() {
 
     // gui var
     var params = {
-      power: 180,
-      enabled: false,
-      wireframe: false,
-      visible: false,
-      transparent: false,
+      // power: 180,
+      control: false,
+      container: false,
+      // wallTran: false,
       sound: false,
       reset: () => {
         ballzStart = true
@@ -543,18 +551,18 @@ function init() {
 
   //GUI
     gui = new dat.GUI();
-    var g;
+    var g = gui;
     // console.log(gui);
     // g = gui.addFolder('shoot power');
     //   g.add(params,'power',10,200).step(0.01).onChange(function(value){
     //     numPower = value
     //   });
-    g = gui.addFolder('Controls');
-      g.add(params,'enabled').onChange(function(value){
+    // g = gui.addFolder('Controls');
+      g.add(params,'control').onChange(function(value){
         controls.enabled = value
       });
-    g = gui.addFolder('Container');
-      g.add(params,'visible').onChange(function(value){
+    // g = gui.addFolder('Container');
+      g.add(params,'container').onChange(function(value){
         goalkeeperContainer.material.visible = value
         doorContianer.material.visible = value
         doorContianerTop.material.visible = value
@@ -571,7 +579,7 @@ function init() {
         wallSpaceBTL.material.visible = value
         wallSpaceBTR.material.visible = value
       });
-      g = gui.addFolder('Sound');
+      // g = gui.addFolder('Sound');
       g.add(params,'sound').onChange(function(value){
         if (value){
           soundYinglak.play()
@@ -580,11 +588,11 @@ function init() {
           soundYinglak.stop()
         }
       });
-      g = gui.addFolder('Wall');
-      g.add(params,'transparent').onChange(function(value){
-        wallBack.material.transparent = (params.transparent);
-      });
-      g = gui.addFolder('Reset ballz');
+      // g = gui.addFolder('Wall');
+      // g.add(params,'wallTran').onChange(function(value){
+      //   wallBack.material.transparent = value
+      // });
+      // g = gui.addFolder('Reset ballz');  
       g.add(params,'reset')
     gui.close()
     gui.width = 200
@@ -765,6 +773,10 @@ function render(){
   renderer.render(scene, camera)
   goalkeeperHtml.innerHTML = 'Goalkeeper: '+goalkeeperContainerCount
   goalDoorHtml.innerHTML = 'GoalDoor: '+doorContianerCount
+  if(!ballzStart)
+    ballStatus.innerHTML = 'Cant'
+  else
+    ballStatus.innerHTML = 'Touch'
   powerBarNum+=Math.random()*7
   if(powerBarNum>=200){
     powerBarNum = 2
