@@ -1,3 +1,6 @@
+if ( WEBGL.isWebGLAvailable() === false ) {
+  document.body.appendChild( WEBGL.getWebGLErrorMessage() );
+}
 Physijs.scripts.worker = "./js/lib/physijs_worker.js";
 Physijs.scripts.ammo = "ammo.js";
 var camera, scene, dlight, renderer, effcutout
@@ -11,6 +14,8 @@ var raycaster = new THREE.Raycaster()
 var arrowHelper
 //sound
 var soundPlay = true;
+//gui
+var gui
 //ball
 var ballz, ballzMaterial, ballzTexture, ballzTexture_nm
 var ballzNum = 1, ballzStart = true
@@ -55,6 +60,7 @@ function init() {
   // scene.add(new THREE.AmbientLight(0x505050))
   camera = new THREE.PerspectiveCamera(70,window.innerWidth/window.innerHeight,1,1000)
   camera.position.set(0,10,50)
+  camera.lookAt(0,5,0)
 
     // loadingScreen Set up the loading screen's scene.
     loadingScreen.box.position.set(0,0,5);
@@ -392,8 +398,9 @@ function init() {
   renderer.shadowMap.enabled = true
   renderer.shadowMap.speng = THREE.PCFShadowMap
   container.appendChild(renderer.domElement)
-  controls = new THREE.OrbitControls(camera)
+  controls = new THREE.OrbitControls(camera, renderer.domElement)
   controls.enabled = false
+  controls.update();
   // effcutout = new THREE.OutlineEffect(renderer)
 
   document.addEventListener( 'mousedown', onMouseDown, false );
@@ -454,11 +461,11 @@ function init() {
   console.log("Press Z: Visible collision box");
   console.log("Press X: Control camera");
   console.log("Press R: Reset ballz");
+  console.log("Press C: On/Off sound");
 
   loadingManager.onLoad = function(){
     // console.log("loaded all resources");
     RESOURCES_LOADED = true;
-    // foo.remove();
     goalkeeperHtml = document.createElement("div")
     goalkeeperHtml.style.position = 'absolute'
     goalkeeperHtml.style.bottom = '60px'
@@ -519,7 +526,7 @@ function init() {
       visible: false,
       transparent: false,
       sound: false,
-      reset: ()=>{
+      reset: () => {
         ballzStart = true
         scene.remove(ballz)
         ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
@@ -529,10 +536,10 @@ function init() {
         ballz.position.set(THREE.Math.randFloat(-15,15),1,THREE.Math.randFloat(40,65));
         scene.add(ballz)
       }
-   };
+   }
 
   //GUI
-    var gui = new dat.GUI();
+    gui = new dat.GUI();
     var g;
     // console.log(gui);
     // g = gui.addFolder('shoot power');
@@ -541,41 +548,41 @@ function init() {
     //   });
     g = gui.addFolder('Controls');
       g.add(params,'enabled').onChange(function(value){
-        controls.enabled = value;
+        controls.enabled = value
       });
     g = gui.addFolder('Container');
       g.add(params,'visible').onChange(function(value){
-        goalkeeperContainer.material.visible = value;
-        doorContianer.material.visible = value;
-        doorContianerTop.material.visible = value;
-        doorContianerRingt.material.visible = value;
-        doorContianerLeft.material.visible = value;
-        doorCompoundTop.material.visible = value;
-        doorCompoundLeft.material.visible = value;
-        doorCompoundRingt.material.visible = value;
-        wallSpace.material.visible = value;
-        wallSpaceL.material.visible = value;
-        wallSpaceR.material.visible = value;
-        wallSpaceT.material.visible = value;
-        wallSpaceBT.material.visible = value;
-        wallSpaceBTL.material.visible = value;
-        wallSpaceBTR.material.visible = value;
+        goalkeeperContainer.material.visible = value
+        doorContianer.material.visible = value
+        doorContianerTop.material.visible = value
+        doorContianerRingt.material.visible = value
+        doorContianerLeft.material.visible = value
+        doorCompoundTop.material.visible = value
+        doorCompoundLeft.material.visible = value
+        doorCompoundRingt.material.visible = value
+        wallSpace.material.visible = value
+        wallSpaceL.material.visible = value
+        wallSpaceR.material.visible = value
+        wallSpaceT.material.visible = value
+        wallSpaceBT.material.visible = value
+        wallSpaceBTL.material.visible = value
+        wallSpaceBTR.material.visible = value
       });
-      g = gui.addFolder('Sound');
-      g.add(params,'sound').onChange(function(value){
-        if (value){
-          soundYinglak.play()
-        }
-        else {
-          soundYinglak.pause()
-        }
-      });
-      g = gui.addFolder('Wall');
-      g.add(params,'transparent').onChange(function(value){
-        wallBack.material.transparent = value;
-      });
-      g = gui.addFolder('Reset ballz');
-      g.add(params,'reset')
+      // g = gui.addFolder('Sound');
+      // g.add(params,'sound').onChange(function(value){
+      //   if (value){
+      //     soundYinglak.play()
+      //   }
+      //   else {
+      //     soundYinglak.stop()
+      //   }
+      // });
+      // g = gui.addFolder('Wall');
+      // g.add(params,'transparent').onChange(function(value){
+      //   wallBack.material.transparent = (params.transparent);
+      // });
+      // g = gui.addFolder('Reset ballz');
+      // g.add(params,'reset')
     gui.close()
     gui.width = 200
   };
@@ -586,10 +593,11 @@ function init() {
 
 
 function handleCollision( collided_with ) {
-  console.log(collided_with.name);
+  // console.log(collided_with.name);
 
   if(collided_with.name === 'goalkeeperContainer'){
-    console.log("goalkeeperContainer",goalkeeperContainerCount++);
+    // console.log("goalkeeperContainer",goalkeeperContainerCount++);
+    goalkeeperContainerCount++
     soundGoalkeeper.play()
     goalkeeperAction.stop()
     goalkeeperActionHaha.stop()
@@ -624,7 +632,8 @@ function handleCollision( collided_with ) {
     }
 
   if(collided_with.name === 'doorContianer'){
-    console.log('doorContianer',doorContianerCount++);
+    // console.log('doorContianer',doorContianerCount++);
+    doorContianerCount++
     soundGoalYeee.play()
     goalkeeperActionSad.play()
     goalkeeperAction.stop()
@@ -668,12 +677,20 @@ function onMouseDown(event){
     // var intersects = raycaster.intersectObjects(scene.children)
     // Intersects = raycaster.intersectObjects(networkObject)
     //bug PowerBarNum=0
+    console.log('x',mouseCoords.x);
+    console.log('y',mouseCoords.y);
+    // console.log('winX',window.innerWidth);
+    // console.log('winY',window.innerHeight);
+    console.log(gui);
+    if(mouseCoords.x>.4||mouseCoords.y>.7)return
+    
+
     if(powerBarNum===0){
       numPower = powerBarNum+1
     }else{
       numPower = powerBarNum
     }
-    console.log('power',powerBarNum);
+    // console.log('power',powerBarNum);
 
     ballz.position.copy(raycaster.ray.direction);
     ballz.position.add(raycaster.ray.origin);
@@ -683,7 +700,6 @@ function onMouseDown(event){
     soundKickball.play()
     ballz.addEventListener( 'collision', handleCollision );
 
-    
     // goalkeeperContainer.addEventListener( 'ready', spawnBox );
 
     goalkeeperContainer.position.set(THREE.Math.randInt(-10,10),THREE.Math.randFloat(2,9),2)
@@ -705,8 +721,7 @@ function onMouseMove( event ) {
   
   var vector = new THREE.Vector3(mouseCoords.x, mouseCoords.y/2, -mouseCoords.y);
   arrowHelper.setDirection(vector)
- 
-  console.log(arrowHelper);
+   // console.log(arrowHelper);
   
 }
 function onTouchMove( event ) {
@@ -735,7 +750,7 @@ function animate(){
     return; // Stop the function here.
   }
   requestAnimationFrame(animate)
-
+  
   render()
 }
 
@@ -744,7 +759,7 @@ function render(){
   goalkeeperMixer.update(delta);
 
   if(camera.position.z<=80)camera.position.z+=1
-  console.log(camera.position.z);
+  // console.log(camera.position.z);
   
   // goalkeeperContainer.position.x = 10;
   // goalkeeperContainer.__dirtyPosition = true;
