@@ -671,10 +671,11 @@ function onTouchEnd( event ) {
 }
 function onMouseDown(event){
   // console.log("mouse down");
+  //loading can't click
+  if(RESOURCES_LOADED=true)return
+  //bugfig
   if(ballzStart){
     event.preventDefault()
-    // mouseCoords.x = (event.clientX/window.innerWidth)*2-1
-    // mouseCoords.y = -(event.clientY/window.innerHeight)*2+1
     mouseCoords.x = (event.clientX/window.innerWidth)*2-1
     mouseCoords.y = -(event.clientY/window.innerHeight)*2+1
 
