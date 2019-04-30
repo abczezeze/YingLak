@@ -33,6 +33,7 @@ var wallBack, wallSpace, wallSpaceBT
 var how2
 //goal door class
 var GoalDoor = new GoalDoor();
+var GoalArea = [];
 //loadingScreen
 var loadingScreen = {
 	scene: new THREE.Scene(),
@@ -200,6 +201,7 @@ function init() {
     doorContianer.position.z = -7;
     doorContianer.name = 'doorContianer'
     doorContianer.add(GoalDoor.mesh)
+    //GoalArea.push(GoalDoor.mesh)
 
     doorContianerTop = new Physijs.BoxMesh(
       new THREE.CubeGeometry( 30, 1, 10 ),
@@ -226,6 +228,7 @@ function init() {
     doorContianer.add(doorContianerLeft)
 
     scene.add(doorContianer)
+    GoalArea.push(doorContianer)
 
     //edge door
     doorCompoundTop = new Physijs.BoxMesh(
@@ -446,7 +449,7 @@ function init() {
       break;
       case 67://C        
         soundPlay = !soundPlay
-        console.log('soundPlay',soundPlay);
+        // console.log('soundPlay',soundPlay);
         // soundYinglak.isPlaying =!soundYinglak.isPlaying
         // console.log('isPlaying',soundYinglak.isPlaying);
         // console.log(soundYinglak);
@@ -568,21 +571,21 @@ function init() {
         wallSpaceBTL.material.visible = value
         wallSpaceBTR.material.visible = value
       });
-      // g = gui.addFolder('Sound');
-      // g.add(params,'sound').onChange(function(value){
-      //   if (value){
-      //     soundYinglak.play()
-      //   }
-      //   else {
-      //     soundYinglak.stop()
-      //   }
-      // });
-      // g = gui.addFolder('Wall');
-      // g.add(params,'transparent').onChange(function(value){
-      //   wallBack.material.transparent = (params.transparent);
-      // });
-      // g = gui.addFolder('Reset ballz');
-      // g.add(params,'reset')
+      g = gui.addFolder('Sound');
+      g.add(params,'sound').onChange(function(value){
+        if (value){
+          soundYinglak.play()
+        }
+        else {
+          soundYinglak.stop()
+        }
+      });
+      g = gui.addFolder('Wall');
+      g.add(params,'transparent').onChange(function(value){
+        wallBack.material.transparent = (params.transparent);
+      });
+      g = gui.addFolder('Reset ballz');
+      g.add(params,'reset')
     gui.close()
     gui.width = 200
   };
@@ -670,45 +673,43 @@ function onMouseDown(event){
   // console.log("mouse down");
   if(ballzStart){
     event.preventDefault()
+    // mouseCoords.x = (event.clientX/window.innerWidth)*2-1
+    // mouseCoords.y = -(event.clientY/window.innerHeight)*2+1
     mouseCoords.x = (event.clientX/window.innerWidth)*2-1
     mouseCoords.y = -(event.clientY/window.innerHeight)*2+1
 
     raycaster.setFromCamera(mouseCoords,camera)
     // var intersects = raycaster.intersectObjects(scene.children)
-    // Intersects = raycaster.intersectObjects(networkObject)
-    //bug PowerBarNum=0
-    console.log('x',mouseCoords.x);
-    console.log('y',mouseCoords.y);
-    // console.log('winX',window.innerWidth);
-    // console.log('winY',window.innerHeight);
-    console.log(gui);
-    if(mouseCoords.x>.4||mouseCoords.y>.7)return
+    Intersects = raycaster.intersectObjects(GoalArea)
+    // console.log(GoalArea);
+    // console.log(Intersects);
     
+    if(Intersects.length>0){
+      // console.log('x',mouseCoords.x);
+      // console.log('y',mouseCoords.y);
+      // console.log('winX',window.innerWidth);
+      // console.log('winY',window.innerHeight);
+      // console.log(gui);
+      if(mouseCoords.x>.4||mouseCoords.y>.7)return
 
-    if(powerBarNum===0){
-      numPower = powerBarNum+1
-    }else{
-      numPower = powerBarNum
+      ballz.position.copy(raycaster.ray.direction);
+      ballz.position.add(raycaster.ray.origin);
+      pos.copy( raycaster.ray.direction );
+      pos.multiplyScalar( numPower );
+      ballz.setLinearVelocity( new THREE.Vector3( pos.x, pos.y*8, pos.z ) );
+      soundKickball.play()
+      ballz.addEventListener( 'collision', handleCollision );
+
+      // goalkeeperContainer.addEventListener( 'ready', spawnBox );
+
+      goalkeeperContainer.position.set(THREE.Math.randInt(-10,10),THREE.Math.randFloat(2,9),2)
+      goalkeeperContainer.__dirtyPosition = true
+      goalkeeperContainer.rotation.set(Math.PI*2, 0, 0)
+      goalkeeperContainer.__dirtyRotation = true
+      // goalkeeperContainer.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+      // goalkeeperContainer.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+      ballzStart = false
     }
-    // console.log('power',powerBarNum);
-
-    ballz.position.copy(raycaster.ray.direction);
-    ballz.position.add(raycaster.ray.origin);
-    pos.copy( raycaster.ray.direction );
-    pos.multiplyScalar( numPower );
-    ballz.setLinearVelocity( new THREE.Vector3( pos.x, pos.y, pos.z ) );
-    soundKickball.play()
-    ballz.addEventListener( 'collision', handleCollision );
-
-    // goalkeeperContainer.addEventListener( 'ready', spawnBox );
-
-    goalkeeperContainer.position.set(THREE.Math.randInt(-10,10),THREE.Math.randFloat(2,9),2)
-    goalkeeperContainer.__dirtyPosition = true
-    goalkeeperContainer.rotation.set(Math.PI*2, 0, 0)
-    goalkeeperContainer.__dirtyRotation = true
-    // goalkeeperContainer.setLinearVelocity(new THREE.Vector3(0, 0, 0));
-    // goalkeeperContainer.setAngularVelocity(new THREE.Vector3(0, 0, 0));
-    ballzStart = false
   }
 }
 function onMouseUp( event ) {
@@ -774,7 +775,7 @@ function render(){
   goalDoorHtml.innerHTML = 'GoalDoor: '+doorContianerCount
   powerBarNum+=Math.random()*7
   if(powerBarNum>=200){
-    powerBarNum = 0
+    powerBarNum = 2
     powerBar.style.height = powerBarNum+"px";
   }else{
     powerBar.style.height = powerBarNum+"px";
