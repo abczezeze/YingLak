@@ -525,7 +525,7 @@ function init() {
     how2.style.fontSize = '30px'
     how2.style.textAlign = 'center'
     how2.style.color = '#5566af'
-    how2.innerHTML = 'Click or Touch<br>eveywhere for shooting'
+    how2.innerHTML = 'Click or Touch<br>The goal for shooting'
     how2.style.textShadow = '0 0 2px #fff'
     document.body.appendChild(how2);
     
@@ -771,12 +771,21 @@ function render(){
 
   // effcutout.render(scene, camera)
   renderer.render(scene, camera)
-  goalkeeperHtml.innerHTML = 'Goalkeeper: '+goalkeeperContainerCount
+  
   goalDoorHtml.innerHTML = 'GoalDoor: '+doorContianerCount
+  // if(doorContianerCount>=1){
+  //   goalkeeperModel.scale.set(6+doorContianerCount,6+doorContianerCount,6+doorContianerCount)
+  //   goalkeeperContainer.scale.set(doorContianerCount,doorContianerCount,doorContianerCount)
+  //   goalkeeperContainer.position.y = 20+doorContianerCount;
+  // }
+  // console.log(goalkeeperModel);  
+  goalkeeperHtml.innerHTML = 'Goalkeeper: '+goalkeeperContainerCount
+
   if(!ballzStart)
-    ballStatus.innerHTML = 'Cant'
+    ballStatus.innerHTML = 'Wait'
   else
     ballStatus.innerHTML = 'Touch'
+  
   powerBarNum+=Math.random()*7
   if(powerBarNum>=200){
     powerBarNum = 2
