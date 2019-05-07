@@ -47,6 +47,7 @@ var RESOURCES_LOADED = false;
 var itemload, itemtotal;
 var loadpage=0;
 var goalkeeperContainerCount = 0, doorContianerCount = 0
+var goalkeeperContainerCountCheck = false, doorContianerCountCheck = false
 // - Main code -
 init()
 animate()
@@ -444,8 +445,9 @@ function init() {
         ballz.receiveShadow = true;
         ballz.castShadow = true
         ballz.name = ballzNum++
-        ballz.position.set(THREE.Math.randFloat(-15,15),1,THREE.Math.randFloat(40,65));
+        ballz.position.set(THREE.Math.randFloat(-10,10),1,THREE.Math.randFloat(50,65));
         scene.add(ballz)
+        arrowHelper.position.set(ballz.position.x,0,ballz.position.z-1 )
       break;
       case 67://C        
         soundPlay = !soundPlay
@@ -544,8 +546,9 @@ function init() {
         ballz.receiveShadow = true;
         ballz.castShadow = true
         ballz.name = ballzNum++
-        ballz.position.set(THREE.Math.randFloat(-15,15),1,THREE.Math.randFloat(40,65));
+        ballz.position.set(THREE.Math.randFloat(-10,10),1,THREE.Math.randFloat(50,65));
         scene.add(ballz)
+        arrowHelper.position.set(ballz.position.x,0,ballz.position.z-1 )
       }
    }
 
@@ -605,10 +608,11 @@ function init() {
 
 function handleCollision( collided_with ) {
   // console.log(collided_with.name);
-
-  if(collided_with.name === 'goalkeeperContainer'){
+  if(collided_with.name === 'goalkeeperContainer' && doorContianerCountCheck && goalkeeperContainerCountCheck){
     // console.log("goalkeeperContainer",goalkeeperContainerCount++);
     goalkeeperContainerCount++
+    goalkeeperContainerCountCheck = false
+    doorContianerCountCheck = false
     soundGoalkeeper.play()
     goalkeeperAction.stop()
     goalkeeperActionHaha.stop()
@@ -616,35 +620,37 @@ function handleCollision( collided_with ) {
     goalkeeperActionBuzz.play()
 
   }
-  if(collided_with.name === 'wallBack' || collided_with.name === 'EdgeDoor'){
+  if(collided_with.name === 'wallBack' || collided_with.name === 'EdgeDoor' && doorContianerCountCheck && goalkeeperContainerCountCheck){
     soundOhno.play()
     goalkeeperAction.stop()
     goalkeeperActionHaha.play()
     goalkeeperActionSad.stop()
     goalkeeperActionBuzz.stop()
-
+    goalkeeperContainerCountCheck = false
+    doorContianerCountCheck = false
   }
 
-    if(collided_with.name === 'floor' || collided_with.name === 'wallBack' || collided_with.name === 'wallSpace'){
+  if(collided_with.name === 'floor' || collided_with.name === 'wallBack' || collided_with.name === 'wallSpace'){
     ballzStart = true
     scene.remove(ballz)
-
     ballz = new Physijs.SphereMesh(new THREE.SphereGeometry(1,32,32), ballzMaterial, 20 )
     ballz.receiveShadow = true;
     ballz.castShadow = true
     ballz.name = ballzNum++
-    ballz.position.set(THREE.Math.randFloat(-15,15),1,THREE.Math.randFloat(40,65));
+    ballz.position.set(THREE.Math.randFloat(-10,10),1,THREE.Math.randFloat(50,65));
     scene.add(ballz)
     arrowHelper.position.set(ballz.position.x,0,ballz.position.z-1 )
     goalkeeperContainer.position.set(THREE.Math.randInt(-10,10),THREE.Math.randFloat(2,9),2)
     goalkeeperContainer.__dirtyPosition = true
     goalkeeperContainer.rotation.set(Math.PI*2, 0, 0)
     goalkeeperContainer.__dirtyRotation = true
-    }
+  }
 
-  if(collided_with.name === 'doorContianer'){
+  if(collided_with.name === 'doorContianer' && doorContianerCountCheck && goalkeeperContainerCountCheck){
     // console.log('doorContianer',doorContianerCount++);
     doorContianerCount++
+    doorContianerCountCheck = false
+    goalkeeperContainerCountCheck = false
     soundGoalYeee.play()
     goalkeeperActionSad.play()
     goalkeeperAction.stop()
@@ -678,7 +684,6 @@ function onTouchEnd( event ) {
 
 }
 function onMouseDown(event){
-  // console.log("mouse down");
   //bugfig
   if(ballzStart){
     event.preventDefault()
@@ -709,6 +714,8 @@ function onMouseDown(event){
       // goalkeeperContainer.setLinearVelocity(new THREE.Vector3(0, 0, 0));
       // goalkeeperContainer.setAngularVelocity(new THREE.Vector3(0, 0, 0));
       ballzStart = false
+      goalkeeperContainerCountCheck = true
+      doorContianerCountCheck = true
     }
   }
 }
@@ -738,15 +745,9 @@ function animate(){
   if( RESOURCES_LOADED == false ){
   // if( RESOURCES_LOADED == true ){
     requestAnimationFrame(animate);
-    // loadingScreen.box.position.x -= 0.05;
     loadingScreen.box.rotation.z -= 0.01;
-    // loadingScreen.box.material.color.setHex( 0xaa0000*i );
-    // loadingScreen.box.material.color = new THREE.Color( Math.random()*0x0000cc );
     loadingScreen.box.material.color.b += .1
-    // loadingScreen.box.rotation.y -= 0.01;
     loadingScreen.box2.rotation.z += 0.01;
-    // loadingScreen.box2.rotation.y += 0.01;
-    // effcutout.render(loadingScreen.scene, loadingScreen.camera);
     renderer.render(loadingScreen.scene, loadingScreen.camera);
     return; // Stop the function here.
   }
