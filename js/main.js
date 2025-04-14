@@ -1,6 +1,3 @@
-if ( WEBGL.isWebGLAvailable() === false ) {
-  document.body.appendChild( WEBGL.getWebGLErrorMessage() );
-}
 Physijs.scripts.worker = "./js/lib/physijs_worker.js";
 Physijs.scripts.ammo = "ammo.js";
 var camera, scene, dlight, renderer, effcutout
